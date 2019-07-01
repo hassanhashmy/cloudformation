@@ -4,7 +4,7 @@ These are Re-Usable-Multiapplication-CloudFormation-Templates
 
 # The Challenge
 
-Need an implementation on AWS which will be track by SCM and implement all changes, updated or new provisioning of Infrastructure with CD/CI using repository and without accessing servers directly. For this challenge we need to design templates in a manner so that we can make different branches and build same code. As there are 3 environment which we required
+Need an implementation on AWS which will be track by SCM and implement all changes, updated or new provisioning of Infrastructure with CD/CI using repository and without accessing servers directly. For this challenge we need to design templates in a manner so that we can make different branches and build same code. As there are 3 environment which we required to provision.
 - Production
 - UAT
 - Test
