@@ -69,7 +69,7 @@ These templates required some minor changes so please read the template that how
 
 # Basic Help
 - Choose the region and define in template. This is design for Sydney region
-- This template is design for 12 different applications so edit it as per your requirement. 
+- This template is design for 12 different applications which makes 1 single platform so edit it as per your requirement. 
 - First Create 2 s3 buckets by using folder number 1 as per your required name and upload all templates to 1st bucket. Leave blank other bucket for application code
 - Then run IAM-Role-FlowLogs.yaml from Standalone folder
 - Run VPC master
