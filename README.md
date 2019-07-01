@@ -68,7 +68,8 @@ These resources are being mapped with other resources automatically by importing
 These templates required some minor changes so please read the template that how these are written and then start implementation. Basic help is mention below.
 
 # Basic Help
-- First Create 2 s3 buckets by using folder number 1 as per your required name and upload all templates to 1st bucket. Leave blank other bucket for application code 
+- Choose the region and define in template. This is design for Sydney region 
+- First Create 2 s3 buckets by using folder number 1 as per your required name and upload all templates to 1st bucket. Leave blank other bucket for application code
 - Then run IAM-Role-FlowLogs.yaml from Standalone folder
 - Run VPC master
 - Run Rout53 master
