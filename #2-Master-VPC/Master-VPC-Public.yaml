@@ -21,7 +21,7 @@ Parameters:
   BuildBucket:
     Description: Name of the build bucket containing the CloudFormation templates
     Type: String
-    Default: DCHash2buildbucket
+    Default: dchash2buildbucket
 
   # Cross-Stack Parameters
   # Not in use in Non-Production as the DCHash2-NonProd CFN stack created the role but did not output the ARN

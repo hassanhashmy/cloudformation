@@ -57,7 +57,7 @@ Parameters:
   #Build Configuration Parameters
   BuildBucket:
     Type: String
-    Default: DCHash2buildbucket
+    Default: dchash2buildbucket
 
   SecurityGroupTemplateFile:
     Type: String

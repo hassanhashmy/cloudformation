@@ -13,7 +13,7 @@ Parameters:
   BuildBucket:
     Description: The S3 bucket which holds the CloudFormation templates
     Type: String
-    Default: DCHash2buildbucket
+    Default: dchash2buildbucket
 
   ElasticSearchTemplateFile:
     Description: Name of the ElasticSearch CloudFormation template file

@@ -2,9 +2,9 @@
 Description: Create S3 Bucket to upload all templates in it. But it is generic template for any name for any purpose with retain policy which means if yo delet the stack the bucket will not delete
 Parameters:
 
-# Lets create a bucket which is already placed in other templates DCHash2buildbucket
+# Lets create a bucket which is already placed in other templates dchash2buildbucket
   S3BucketName:
-    Description: The name of the Amazon S3 bucket
+    Description: The name of the Amazon S3 bucket with lower case
     Type: String
     Default: dchash2buildbucket
 

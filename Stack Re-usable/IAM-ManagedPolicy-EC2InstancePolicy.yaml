@@ -4,7 +4,7 @@ Parameters:
   BuildBucket:
     Description: Bucket used for pulling data and applications on build
     Type: String
-    Default: DCHash2buildbucket
+    Default: dchash2buildbucket
   AppBucket:
     Description: Bucket used for storing applicaton code
     Type: String

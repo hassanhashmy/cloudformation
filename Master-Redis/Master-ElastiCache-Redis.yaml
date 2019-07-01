@@ -52,7 +52,7 @@ Parameters:
   #Build Parameters
   BuildBucket:
     Type: String
-    Default: DCHash2buildbucket
+    Default: dchash2buildbucket
 
   RedisSecurityGroupTemplateFile:
     Type: String
