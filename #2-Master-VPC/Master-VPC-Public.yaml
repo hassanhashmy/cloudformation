@@ -125,9 +125,9 @@ Parameters:
     Description: Fully qualified domain name (FQDN) of the root domain e.g. example.com
     Type: String
     MinLength: '3'
-    MaxLength: '25'
+    MaxLength: '40'
     AllowedPattern: "[a-zA-Z0-9]+\\..+"
-    Default: uat.ClientPlatformName.local
+    Default: uat.ClientPlatform.local
 
 # Parameter Grouping
 Metadata:
