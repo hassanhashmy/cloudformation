@@ -1,0 +1,160 @@
+# Template created by hash
+Description: Security Group for RDS MySQL
+
+Parameters:
+
+# Cross-Stack Parameters
+  VPCId:
+    Type: String
+
+# Source Security Group Parameters
+
+#  AmplifySecurityGroup:
+#    Type: AWS::EC2::SecurityGroup::Id
+#
+#  DataConsumerSecurityGroup:
+#    Type: AWS::EC2::SecurityGroup::Id
+#
+#  DataIngestionSecurityGroup:
+#    Type: AWS::EC2::SecurityGroup::Id
+#
+#  KnoxSecurityGroup:
+#    Type: AWS::EC2::SecurityGroup::Id
+#
+#  PosIntegrationSecurityGroup:
+#    Type: AWS::EC2::SecurityGroup::Id
+#
+#  SoldiSecurityGroup:
+#    Type: AWS::EC2::SecurityGroup::Id
+#
+#  SuperPortalSecurityGroup:
+#    Type: AWS::EC2::SecurityGroup::Id
+
+# Tagging Parameters
+  Environment:
+    Type: String
+    AllowedValues:
+      - Production
+      - UAT
+      - Test
+
+  BusinessUnit:
+    Type: String
+    AllowedValues:
+      - Charitable
+      - Corporate
+      - Gaming
+      - Lotteries
+      - Wagering
+    ConstraintDescription: Must be Charitable | Corporate | Gaming | Lotteries | Wagering
+  Department:
+    Type: String
+    MinLength: '3'
+    MaxLength: '255'
+    Default: BrandName
+  Application:
+    Type: String
+    MinLength: '3'
+    MaxLength: '255'
+    Default: SomePlatform
+  Component:
+    Type: String
+    Default: RDS-MySQL
+
+Resources:
+
+# Create Security Group
+  SecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: !Sub ${Application} ${Component} Security Group
+      VpcId: !Ref VPCId
+      Tags:
+      - Key: Name
+        Value:  !Sub ${Environment}-${Component}-${Application}
+      - Key: Environment
+        Value: !Ref Environment
+      - Key: BusinessUnit
+        Value: !Ref BusinessUnit
+      - Key: Application
+        Value: !Ref Application
+
+# Add Security Group rules
+#  IngressMySQL3306Amplify:
+#    Type: AWS::EC2::SecurityGroupIngress
+#    Properties:
+#      IpProtocol: tcp
+#      FromPort: 3306
+#      ToPort: 3306
+#      SourceSecurityGroupId: !Ref AmplifySecurityGroup
+#      GroupId: !Ref SecurityGroup
+#
+#  IngressMySQL3306DataConsumer:
+#    Type: AWS::EC2::SecurityGroupIngress
+#    Properties:
+#      IpProtocol: tcp
+#      FromPort: 3306
+#      ToPort: 3306
+#      SourceSecurityGroupId: !Ref DataConsumerSecurityGroup
+#      GroupId: !Ref SecurityGroup
+#
+#  IngressMySQL3306DataIngestion:
+#    Type: AWS::EC2::SecurityGroupIngress
+#    Properties:
+#      IpProtocol: tcp
+#      FromPort: 3306
+#      ToPort: 3306
+#      SourceSecurityGroupId: !Ref DataIngestionSecurityGroup
+#      GroupId: !Ref SecurityGroup
+#
+#  IngressMySQL3306Knox:
+#    Type: AWS::EC2::SecurityGroupIngress
+#    Properties:
+#      IpProtocol: tcp
+#      FromPort: 3306
+#      ToPort: 3306
+#      SourceSecurityGroupId: !Ref KnoxSecurityGroup
+#      GroupId: !Ref SecurityGroup
+#
+#  IngressMySQL3306PosIntegration:
+#    Type: AWS::EC2::SecurityGroupIngress
+#    Properties:
+#      IpProtocol: tcp
+#      FromPort: 3306
+#      ToPort: 3306
+#      SourceSecurityGroupId: !Ref PosIntegrationSecurityGroup
+#      GroupId: !Ref SecurityGroup
+#
+#  IngressMySQL3306Soldi:
+#    Type: AWS::EC2::SecurityGroupIngress
+#    Properties:
+#      IpProtocol: tcp
+#      FromPort: 3306
+#      ToPort: 3306
+#      SourceSecurityGroupId: !Ref SoldiSecurityGroup
+#      GroupId: !Ref SecurityGroup
+#
+#  IngressMySQL3306SuperPortal:
+#    Type: AWS::EC2::SecurityGroupIngress
+#    Properties:
+#      IpProtocol: tcp
+#      FromPort: 3306
+#      ToPort: 3306
+#      SourceSecurityGroupId: !Ref SuperPortalSecurityGroup
+#      GroupId: !Ref SecurityGroup
+#
+#  IngressMySQL3306DataConsumer:
+#    Type: AWS::EC2::SecurityGroupIngress
+#    Properties:
+#      IpProtocol: tcp
+#      FromPort: 3306
+#      ToPort: 3306
+#      SourceSecurityGroupId: !Ref DataConsumerSecurityGroup
+#      GroupId: !Ref SecurityGroup
+
+Outputs:
+  SecurityGroup:
+    Description: The RDS Security Group
+    Value:  !Ref SecurityGroup
+    Export:
+      Name: !Sub "${AWS::StackName}-SecurityGroup"

@@ -1,0 +1,510 @@
+# Template created by hash
+Description: Creates Security Groups for DCHash 2
+Parameters:
+
+# CloudFormation URL Parameters
+  AppSuperPortalFile:
+    Type: String
+    Description: Filename of the Application Super Portal SG template including file extension
+    Default: EC2-SecurityGroup-App-SuperPortal.yaml
+  AppKNOXFile:
+    Type: String
+    Description: Filename of the Application KNOX SG template including file extension
+    Default: EC2-SecurityGroup-App-KNOX.yaml
+  AppWatchTowerFile:
+    Type: String
+    Description: Filename of the Application WatchTowerSG template including file extension
+    Default: EC2-SecurityGroup-App-WatchTower.yaml
+  AppAmpliFiFile:
+    Type: String
+    Description: Filename of the Application AmpliFi SG template including file extension
+    Default: EC2-SecurityGroup-App-AmpliFi.yaml
+  AppKnoxFile:
+    Type: String
+    Description: Filename of the Application KNOX SG template including file extension
+    Default: EC2-SecurityGroup-App-KNOX.yaml
+  AppDataIngestionFile:
+    Type: String
+    Description: Filename of the Application Data Ingestion SG template including file extension
+    Default: EC2-SecurityGroup-App-DataIngestion.yaml
+  AppSoldiFile:
+    Type: String
+    Description: Filename of the Application Soldi SG template including file extension
+    Default: EC2-SecurityGroup-App-Soldi.yaml
+  AppPosIntegrationFile:
+    Type: String
+    Description: Filename of the Application POS Integration SG template including file extension
+    Default: EC2-SecurityGroup-App-POSIntegration.yaml
+  AppKafkaFile:
+    Type: String
+    Description: Filename of the Application Kafka SG template including file extension
+    Default: EC2-SecurityGroup-App-Kafka.yaml
+  AppRabbitMqFile:
+    Type: String
+    Description: Filename of the Application RabbitMq SG template including file extension
+    Default: EC2-SecurityGroup-App-RabbitMq.yaml
+  ElastiCacheRedisFile:
+    Type: String
+    Description: Filename of the ElastiCache Redis SG template including file extension
+    Default: EC2-SecurityGroup-ElastiCacheRedis.yaml
+  LoadBalancerFile:
+    Type: String
+    Description: Filename of the LoadBalancer SG template including file extension
+    Default: EC2-SecurityGroup-ELB.yaml
+  RDSMySqlFile:
+    Type: String
+    Description: Filename of the RDS SG template including file extension
+    Default: EC2-SecurityGroup-RDSMySql.yaml
+  BuildBucket:
+    Description: Name of the S3 bucket containing the CloudFormation templates
+    Type: String
+    Default: DCHash2buildbucket
+
+# Cross-Stack Parameters
+  VPCStackName:
+    Description: Stack Name that built the VPC
+    Type: String
+    Default: DCHash2-VPC
+
+# Tagging Parameters
+  Environment:
+    Description: Production or NonProduction
+    Type: String
+    Default: Production
+    AllowedValues:
+      - Production
+      - NonProduction
+  BusinessUnit:
+    Description: Some Business Unit
+    Type: String
+    Default: Gaming
+    AllowedValues:
+      - Charitable
+      - Corporate
+      - Gaming
+      - Lotteries
+      - Wagering
+    ConstraintDescription: Must be Charitable | Corporate | Gaming | Lotteries | Wagering
+  Department:
+    Description: Team name Brand Name
+    Type: String
+    MinLength: '3'
+    MaxLength: '255'
+    Default: BrandName
+  Application:
+    Description: Specific Application
+    Type: String
+    MinLength: '3'
+    MaxLength: '255'
+    Default: SomePlatform
+
+
+# Parameter Grouping
+Metadata:
+  AWS::CloudFormation::Interface:
+    ParameterGroups:
+    - Label:
+        default: CloudFormation Template Files and Location
+      Parameters:
+      - LoadBalancerFile
+      - AppAmpliFiFile
+      - AppDataIngestionFile
+      - AppKNOXFile
+      - AppPosIntegrationFile
+      - AppSoldiFile
+      - AppSuperPortalFile
+      - AppWatchTowerFile
+      - AppKafkaFile
+      - AppRabbitMqFile
+      - ElastiCacheRedisFile
+      - RDSMySqlFile
+      - BuildBucket
+    - Label:
+        default: Cross-Stack Reference Parameters
+      Parameters:
+      - VPCStackName
+    - Label:
+        default: Tagging Parameters
+      Parameters:
+      - Environment
+      - BusinessUnit
+      - Department
+      - Application
+
+Resources:
+
+  # Internet Elastic Load Balancer Security Groups. These all use the same template
+  ELBAmpliFiSG:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub https://s3-${AWS::Region}.amazonaws.com/${BuildBucket}/${LoadBalancerFile}
+      Parameters:
+        Environment: !Ref Environment
+        BusinessUnit: !Ref BusinessUnit
+        Department: !Ref Department
+        Application: !Ref Application
+        VPCId:
+          Fn::ImportValue: !Sub ${VPCStackName}-VPCID
+        Component: AmpliFi
+
+  ELBDataIngestionSG:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub https://s3-${AWS::Region}.amazonaws.com/${BuildBucket}/${LoadBalancerFile}
+      Parameters:
+        Environment: !Ref Environment
+        BusinessUnit: !Ref BusinessUnit
+        Department: !Ref Department
+        Application: !Ref Application
+        VPCId:
+          Fn::ImportValue: !Sub ${VPCStackName}-VPCID
+        Component: DataIngestion
+
+  ELBKnoxSG:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub https://s3-${AWS::Region}.amazonaws.com/${BuildBucket}/${LoadBalancerFile}
+      Parameters:
+        Environment: !Ref Environment
+        BusinessUnit: !Ref BusinessUnit
+        Department: !Ref Department
+        Application: !Ref Application
+        VPCId:
+          Fn::ImportValue: !Sub ${VPCStackName}-VPCID
+        Component: KNOX
+
+  ELBPosIntegrationSG:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub https://s3-${AWS::Region}.amazonaws.com/${BuildBucket}/${LoadBalancerFile}
+      Parameters:
+        Environment: !Ref Environment
+        BusinessUnit: !Ref BusinessUnit
+        Department: !Ref Department
+        Application: !Ref Application
+        VPCId:
+          Fn::ImportValue: !Sub ${VPCStackName}-VPCID
+        Component: POSIntegration
+
+  ELBSoldiSG:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub https://s3-${AWS::Region}.amazonaws.com/${BuildBucket}/${LoadBalancerFile}
+      Parameters:
+        Environment: !Ref Environment
+        BusinessUnit: !Ref BusinessUnit
+        Department: !Ref Department
+        Application: !Ref Application
+        VPCId:
+          Fn::ImportValue: !Sub ${VPCStackName}-VPCID
+        Component: Soldi
+
+  ELBSuperPortalSG:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub https://s3-${AWS::Region}.amazonaws.com/${BuildBucket}/${LoadBalancerFile}
+      Parameters:
+        Environment: !Ref Environment
+        BusinessUnit: !Ref BusinessUnit
+        Department: !Ref Department
+        Application: !Ref Application
+        VPCId:
+          Fn::ImportValue: !Sub ${VPCStackName}-VPCID
+        Component: SuperPortal
+
+  ELBWatchTowerSG:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub https://s3-${AWS::Region}.amazonaws.com/${BuildBucket}/${LoadBalancerFile}
+      Parameters:
+        Environment: !Ref Environment
+        BusinessUnit: !Ref BusinessUnit
+        Department: !Ref Department
+        Application: !Ref Application
+        VPCId:
+          Fn::ImportValue: !Sub ${VPCStackName}-VPCID
+        Component: WatchTower
+
+  # Application Security Groups
+
+  AppAmpliFiSG:
+    Type: AWS::CloudFormation::Stack
+    DependsOn: ELBAmpliFiSG
+    Properties:
+      TemplateURL: !Sub https://s3-${AWS::Region}.amazonaws.com/${BuildBucket}/${AppAmpliFiFile}
+      Parameters:
+        Environment: !Ref Environment
+        BusinessUnit: !Ref BusinessUnit
+        Department: !Ref Department
+        Application: !Ref Application
+        VPCId:
+          Fn::ImportValue: !Sub ${VPCStackName}-VPCID
+        Component: AmpliFi
+        ELBSecurityGroup: !GetAtt [ "ELBAmpliFiSG", "Outputs.SecurityGroup" ]
+
+  AppDataIngestionSG:
+    Type: AWS::CloudFormation::Stack
+    DependsOn: ELBDataIngestionSG
+    Properties:
+      TemplateURL: !Sub https://s3-${AWS::Region}.amazonaws.com/${BuildBucket}/${AppDataIngestionFile}
+      Parameters:
+        Environment: !Ref Environment
+        BusinessUnit: !Ref BusinessUnit
+        Department: !Ref Department
+        Application: !Ref Application
+        VPCId:
+          Fn::ImportValue: !Sub ${VPCStackName}-VPCID
+        Component: DataIngestion
+        ELBSecurityGroup: !GetAtt [ "ELBDataIngestionSG", "Outputs.SecurityGroup" ]
+
+  AppKnoxSG:
+    Type: AWS::CloudFormation::Stack
+    DependsOn: ELBKnoxSG
+    Properties:
+      TemplateURL: !Sub https://s3-${AWS::Region}.amazonaws.com/${BuildBucket}/${AppKnoxFile}
+      Parameters:
+        Environment: !Ref Environment
+        BusinessUnit: !Ref BusinessUnit
+        Department: !Ref Department
+        Application: !Ref Application
+        VPCId:
+          Fn::ImportValue: !Sub ${VPCStackName}-VPCID
+        Component: Knox
+        ELBSecurityGroup: !GetAtt [ "ELBKnoxSG", "Outputs.SecurityGroup" ]
+
+  AppPosIntegrationSG:
+    Type: AWS::CloudFormation::Stack
+    DependsOn: ELBPosIntegrationSG
+    Properties:
+      TemplateURL: !Sub https://s3-${AWS::Region}.amazonaws.com/${BuildBucket}/${AppPosIntegrationFile}
+      Parameters:
+        Environment: !Ref Environment
+        BusinessUnit: !Ref BusinessUnit
+        Department: !Ref Department
+        Application: !Ref Application
+        VPCId:
+          Fn::ImportValue: !Sub ${VPCStackName}-VPCID
+        Component: PosIntegration
+        ELBSecurityGroup: !GetAtt [ "ELBPosIntegrationSG", "Outputs.SecurityGroup" ]
+
+  AppSuperPortalSG:
+    Type: AWS::CloudFormation::Stack
+    DependsOn: ELBSuperPortalSG
+    Properties:
+      TemplateURL: !Sub https://s3-${AWS::Region}.amazonaws.com/${BuildBucket}/${AppSuperPortalFile}
+      Parameters:
+        Environment: !Ref Environment
+        BusinessUnit: !Ref BusinessUnit
+        Department: !Ref Department
+        Application: !Ref Application
+        VPCId:
+          Fn::ImportValue: !Sub ${VPCStackName}-VPCID
+        Component: SuperPortal
+        ELBSecurityGroup: !GetAtt [ "ELBSuperPortalSG", "Outputs.SecurityGroup" ]
+
+  AppWatchTowerSG:
+    Type: AWS::CloudFormation::Stack
+    DependsOn: ELBWatchTowerSG
+    Properties:
+      TemplateURL: !Sub https://s3-${AWS::Region}.amazonaws.com/${BuildBucket}/${AppWatchTowerFile}
+      Parameters:
+        Environment: !Ref Environment
+        BusinessUnit: !Ref BusinessUnit
+        Department: !Ref Department
+        Application: !Ref Application
+        VPCId:
+          Fn::ImportValue: !Sub ${VPCStackName}-VPCID
+        Component: WatchTower
+        ELBSecurityGroup: !GetAtt [ "ELBWatchTowerSG", "Outputs.SecurityGroup" ]
+
+  AppKafkaSG:
+    Type: AWS::CloudFormation::Stack
+    DependsOn:
+    - AppAmpliFiSG
+    - AppDataIngestionSG
+    - AppKnoxSG
+    - AppPosIntegrationSG
+    - AppSuperPortalSG
+    - AppWatchTowerSG
+    Properties:
+      TemplateURL: !Sub https://s3-${AWS::Region}.amazonaws.com/${BuildBucket}/${AppKafkaFile}
+      Parameters:
+        Environment: !Ref Environment
+        BusinessUnit: !Ref BusinessUnit
+        Department: !Ref Department
+        Application: !Ref Application
+        VPCId:
+          Fn::ImportValue: !Sub ${VPCStackName}-VPCID
+        Component: Kafka
+        AppAmpliFiSecurityGroup: !GetAtt [ "AppAmpliFiSG", "Outputs.SecurityGroup" ]
+        AppDataIngestionSecurityGroup: !GetAtt [ "AppDataIngestionSG", "Outputs.SecurityGroup" ]
+        AppKnoxSecurityGroup: !GetAtt [ "AppKnoxSG", "Outputs.SecurityGroup" ]
+        AppPosIntegrationSecurityGroup: !GetAtt [ "AppPosIntegrationSG", "Outputs.SecurityGroup" ]
+        AppSuperPortalSecurityGroup: !GetAtt [ "AppSuperPortalSG", "Outputs.SecurityGroup" ]
+        AppWatchTowerSecurityGroup: !GetAtt [ "AppWatchTowerSG", "Outputs.SecurityGroup" ]
+
+  AppRabbitMqSG:
+    Type: AWS::CloudFormation::Stack
+    DependsOn:
+    - AppDataIngestionSG
+    Properties:
+      TemplateURL: !Sub https://s3-${AWS::Region}.amazonaws.com/${BuildBucket}/${AppRabbitMqFile}
+      Parameters:
+        Environment: !Ref Environment
+        BusinessUnit: !Ref BusinessUnit
+        Department: !Ref Department
+        Application: !Ref Application
+        VPCId:
+          Fn::ImportValue: !Sub ${VPCStackName}-VPCID
+        Component: RabbitMq
+        AppDataIngestionSecurityGroup: !GetAtt [ "AppDataIngestionSG", "Outputs.SecurityGroup" ]
+
+  # Security Groups for Other VPC Resources
+  ElastiCacheRedisSG:
+    Type: AWS::CloudFormation::Stack
+    DependsOn:
+    - AppAmpliFiSG
+    - AppDataIngestionSG
+    - AppKnoxSG
+    - AppPosIntegrationSG
+    - AppSuperPortalSG
+    - AppWatchTowerSG
+    Properties:
+      TemplateURL: !Sub https://s3-${AWS::Region}.amazonaws.com/${BuildBucket}/${ElastiCacheRedisFile}
+      Parameters:
+        Environment: !Ref Environment
+        BusinessUnit: !Ref BusinessUnit
+        Department: !Ref Department
+        Application: !Ref Application
+        VPCId:
+          Fn::ImportValue: !Sub ${VPCStackName}-VPCID
+        Component: ElastiCacheRedis
+        AppAmpliFiSecurityGroup: !GetAtt [ "AppAmpliFiSG", "Outputs.SecurityGroup" ]
+        AppDataIngestionSecurityGroup: !GetAtt [ "AppDataIngestionSG", "Outputs.SecurityGroup" ]
+        AppKnoxSecurityGroup: !GetAtt [ "AppKnoxSG", "Outputs.SecurityGroup" ]
+        AppPosIntegrationSecurityGroup: !GetAtt [ "AppPosIntegrationSG", "Outputs.SecurityGroup" ]
+        AppSuperPortalSecurityGroup: !GetAtt [ "AppSuperPortalSG", "Outputs.SecurityGroup" ]
+        AppWatchTowerSecurityGroup: !GetAtt [ "AppWatchTowerSG", "Outputs.SecurityGroup" ]
+
+  RDSMySqlSG:
+    Type: AWS::CloudFormation::Stack
+    DependsOn:
+    - AppAmpliFiSG
+    - AppDataIngestionSG
+    - AppKnoxSG
+    - AppPosIntegrationSG
+    - AppSuperPortalSG
+    - AppWatchTowerSG
+    Properties:
+      TemplateURL: !Join [ "/", [ "https://s3-ap-southeast-2.amazonaws.com", !Ref BuildBucket, !Ref RDSMySqlFile ]]
+      Parameters:
+        Environment: !Ref Environment
+        BusinessUnit: !Ref BusinessUnit
+        Department: !Ref Department
+        Application: !Ref Application
+        VPCId:
+          Fn::ImportValue: !Sub ${VPCStackName}-VPCID
+        Component: RDSMySql
+        AppAmpliFiSecurityGroup: !GetAtt [ "AppAmpliFiSG", "Outputs.SecurityGroup" ]
+        AppDataIngestionSecurityGroup: !GetAtt [ "AppDataIngestionSG", "Outputs.SecurityGroup" ]
+        AppKnoxSecurityGroup: !GetAtt [ "AppKnoxSG", "Outputs.SecurityGroup" ]
+        AppPosIntegrationSecurityGroup: !GetAtt [ "AppPosIntegrationSG", "Outputs.SecurityGroup" ]
+        AppSuperPortalSecurityGroup: !GetAtt [ "AppSuperPortalSG", "Outputs.SecurityGroup" ]
+        AppWatchTowerSecurityGroup: !GetAtt [ "AppWatchTowerSG", "Outputs.SecurityGroup" ]
+
+Outputs:
+
+  ELBAmpliFiSG:
+    Description: Load Balancer AmpliFi Security Group ID
+    Value: !GetAtt [ "ELBAmpliFiSG", "Outputs.SecurityGroup" ]
+    Export:
+      Name: !Sub "${AWS::StackName}-ELBAmpliFiSG"
+
+  AppAmpliFiSG:
+    Description: Application AmpliFi Security Group ID
+    Value: !GetAtt [ "AppAmpliFiSG", "Outputs.SecurityGroup" ]
+    Export:
+      Name: !Sub "${AWS::StackName}-AppAmpliFiSG"
+
+  ELBDataIngestionSG:
+    Description: Load Balancer DataIngestion Security Group ID
+    Value: !GetAtt [ "ELBDataIngestionSG", "Outputs.SecurityGroup" ]
+    Export:
+      Name: !Sub "${AWS::StackName}-ELBDataIngestionSG"
+
+  AppDataIngestionSG:
+    Description: Application DataIngestion Security Group ID
+    Value: !GetAtt [ "AppDataIngestionSG", "Outputs.SecurityGroup" ]
+    Export:
+      Name: !Sub "${AWS::StackName}-AppDataIngestionSG"
+
+  ELBKnoxSG:
+    Description: Load Balancer Knox Security Group ID
+    Value: !GetAtt [ "ELBKnoxSG", "Outputs.SecurityGroup" ]
+    Export:
+      Name: !Sub "${AWS::StackName}-ELBKnoxSG"
+
+  AppKnoxSG:
+    Description: Application KNOX Security Group ID
+    Value: !GetAtt [ "AppKnoxSG", "Outputs.SecurityGroup" ]
+    Export:
+      Name: !Sub "${AWS::StackName}-AppKnoxSG"
+
+  ELBPosIntegrationSG:
+    Description: Load Balancer PosIntegration Security Group ID
+    Value: !GetAtt [ "ELBPosIntegrationSG", "Outputs.SecurityGroup" ]
+    Export:
+      Name: !Sub "${AWS::StackName}-ELBPosIntegrationSG"
+
+  AppPosIntegrationSG:
+    Description: Application PosIntegration Security Group ID
+    Value: !GetAtt [ "AppPosIntegrationSG", "Outputs.SecurityGroup" ]
+    Export:
+      Name: !Sub "${AWS::StackName}-AppPosIntegrationSG"
+
+  ELBSuperPortalSG:
+    Description: Load Balancer SuperPortal Security Group ID
+    Value: !GetAtt [ "ELBSuperPortalSG", "Outputs.SecurityGroup" ]
+    Export:
+      Name: !Sub "${AWS::StackName}-ELBSuperPortalSG"
+
+  AppSuperPortalSG:
+    Description: Application SuperPortal Security Group ID
+    Value: !GetAtt [ "AppSuperPortalSG", "Outputs.SecurityGroup" ]
+    Export:
+      Name: !Sub "${AWS::StackName}-AppSuperPortalSG"
+
+  ELBWatchTowerSG:
+    Description: Load Balancer WatchTower Security Group ID
+    Value: !GetAtt [ "ELBWatchTowerSG", "Outputs.SecurityGroup" ]
+    Export:
+      Name: !Sub "${AWS::StackName}-ELBWatchTowerSG"
+
+  AppWatchTowerSG:
+    Description: Application WatchTower Security Group ID
+    Value: !GetAtt [ "AppWatchTowerSG", "Outputs.SecurityGroup" ]
+    Export:
+      Name: !Sub "${AWS::StackName}-AppWatchTowerSG"
+
+  AppKafkaSG:
+    Description: Application Kafka Security Group ID
+    Value: !GetAtt [ "AppKafkaSG", "Outputs.SecurityGroup" ]
+    Export:
+      Name: !Sub "${AWS::StackName}-AppKafkaSG"
+
+  AppRabbitMqSG:
+    Description: Application RabbitMq Security Group ID
+    Value: !GetAtt [ "AppRabbitMqSG", "Outputs.SecurityGroup" ]
+    Export:
+      Name: !Sub "${AWS::StackName}-AppRabbitMqSG"
+
+  ElastiCacheRedisSG:
+    Description: ElastiCache Redis Security Group ID
+    Value: !GetAtt [ "ElastiCacheRedisSG", "Outputs.SecurityGroup" ]
+    Export:
+      Name: !Sub "${AWS::StackName}-ElastiCacheRedisSG"
+  RDSMySqlSG:
+    Description: RDS MySql Security Group ID
+    Value: !GetAtt [ "RDSMySqlSG", "Outputs.SecurityGroup" ]
+    Export:
+      Name: !Sub "${AWS::StackName}-RDSMySqlSG"

@@ -1,0 +1,258 @@
+# Template created by hash
+Description: Security Group for App Kafka EC2 Instances
+
+Parameters:
+
+  VPCStackName:
+    Description: Stack Name that built the VPC
+    Type: String
+    Default: DCHash2-VPC
+
+  VPCId:
+    Description: The VPC Id
+    Type: AWS::EC2::VPC::Id
+
+  # Security groups allowed ingress to Kafka application
+
+#  AmplifySecurityGroup:
+#    Type: AWS::EC2::SecurityGroup::Id
+#
+#  DataConsumerSecurityGroup:
+#    Type: AWS::EC2::SecurityGroup::Id
+#
+#  DataIngestionSecurityGroup:
+#    Type: AWS::EC2::SecurityGroup::Id
+#
+#  KnoxSecurityGroup:
+#    Type: AWS::EC2::SecurityGroup::Id
+#
+#  PosIntegrationSecurityGroup:
+#    Type: AWS::EC2::SecurityGroup::Id
+#
+#  SoldiSecurityGroup:
+#    Type: AWS::EC2::SecurityGroup::Id
+#
+#  SuperPortalSecurityGroup:
+#    Type: AWS::EC2::SecurityGroup::Id
+
+# Tagging Parameters
+  Environment:
+    Type: String
+    AllowedValues:
+      - Production
+      - UAT
+      - Test
+  BusinessUnit:
+    Type: String
+    AllowedValues:
+      - Charitable
+      - Corporate
+      - Gaming
+      - Lotteries
+      - Wagering
+    ConstraintDescription: Must be Charitable | Corporate | Gaming | Lotteries | Wagering
+  Department:
+    Type: String
+    MinLength: '3'
+    MaxLength: '255'
+    Default: BrandName
+  Application:
+    Type: String
+    MinLength: '3'
+    MaxLength: '255'
+    Default: SomePlatform
+  Component:
+    Type: String
+    MinLength: '3'
+    MaxLength: '255'
+    Default: Kafka
+
+Resources:
+
+  # Create Security Group
+  SecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: !Sub ${Component} Security Group
+      VpcId: !Ref VPCId
+      Tags:
+      - Key: Name
+        Value:  !Sub ${Environment}-${Component}-App
+      - Key: Environment
+        Value: !Ref Environment
+      - Key: BusinessUnit
+        Value: !Ref BusinessUnit
+      - Key: Application
+        Value: !Ref Application
+      - Key: Component
+        Value: !Ref Component
+
+ # Add rules to Security Group
+
+  # Open ports for Kafka clustering
+  KafkaCluster2888IngressRule:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      IpProtocol: tcp
+      ToPort: 2888
+      FromPort: 2888
+      SourceSecurityGroupId: !Ref SecurityGroup
+      GroupId: !Ref SecurityGroup
+
+  KafkaCluster3888IngressRule:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      IpProtocol: tcp
+      ToPort: 3888
+      FromPort: 3888
+      SourceSecurityGroupId: !Ref SecurityGroup
+      GroupId: !Ref SecurityGroup
+
+  # Open ports for applications to access Kafka
+#  Amplify2181IngressRule:
+#    Type: AWS::EC2::SecurityGroupIngress
+#    Properties:
+#      IpProtocol: tcp
+#      FromPort: 2181
+#      ToPort: 2181
+#      SourceSecurityGroupId: !Ref AmplifySecurityGroup
+#      GroupId: !Ref SecurityGroup
+#
+#  Amplify9092IngressRule:
+#    Type: AWS::EC2::SecurityGroupIngress
+#    Properties:
+#      IpProtocol: tcp
+#      FromPort: 9092
+#      ToPort: 9092
+#      SourceSecurityGroupId: !Ref AmplifySecurityGroup
+#      GroupId: !Ref SecurityGroup
+#
+#  # Data Consumer
+#  DataConsumer2181IngressRule:
+#    Type: AWS::EC2::SecurityGroupIngress
+#    Properties:
+#      IpProtocol: tcp
+#      FromPort: 2181
+#      ToPort: 2181
+#      SourceSecurityGroupId: !Ref DataConsumerSecurityGroup
+#      GroupId: !Ref SecurityGroup
+#
+#  DataConsumer9092IngressRule:
+#    Type: AWS::EC2::SecurityGroupIngress
+#    Properties:
+#      IpProtocol: tcp
+#      FromPort: 9092
+#      ToPort: 9092
+#      SourceSecurityGroupId: !Ref DataConsumerSecurityGroup
+#      GroupId: !Ref SecurityGroup
+#
+#  # Data Ingestion
+#  DataIngestion2181IngressRule:
+#    Type: AWS::EC2::SecurityGroupIngress
+#    Properties:
+#      IpProtocol: tcp
+#      FromPort: 2181
+#      ToPort: 2181
+#      SourceSecurityGroupId: !Ref DataIngestionSecurityGroup
+#      GroupId: !Ref SecurityGroup
+#
+#  DataIngestion9092IngressRule:
+#    Type: AWS::EC2::SecurityGroupIngress
+#    Properties:
+#      IpProtocol: tcp
+#      FromPort: 9092
+#      ToPort: 9092
+#      SourceSecurityGroupId: !Ref DataIngestionSecurityGroup
+#      GroupId: !Ref SecurityGroup
+#
+#  # KNOX
+#  Knox2181IngressRule:
+#    Type: AWS::EC2::SecurityGroupIngress
+#    Properties:
+#      IpProtocol: tcp
+#      FromPort: 2181
+#      ToPort: 2181
+#      SourceSecurityGroupId: !Ref KnoxSecurityGroup
+#      GroupId: !Ref SecurityGroup
+#
+#  Knox9092IngressRule:
+#    Type: AWS::EC2::SecurityGroupIngress
+#    Properties:
+#      IpProtocol: tcp
+#      FromPort: 9092
+#      ToPort: 9092
+#      SourceSecurityGroupId: !Ref KnoxSecurityGroup
+#      GroupId: !Ref SecurityGroup
+#
+#  # POS Integration
+#  PosIntegration2181IngressRule:
+#    Type: AWS::EC2::SecurityGroupIngress
+#    Properties:
+#      IpProtocol: tcp
+#      FromPort: 2181
+#      ToPort: 2181
+#      SourceSecurityGroupId: !Ref PosIntegrationSecurityGroup
+#      GroupId: !Ref SecurityGroup
+#
+#  PosInegration9092IngressRule:
+#    Type: AWS::EC2::SecurityGroupIngress
+#    Properties:
+#      IpProtocol: tcp
+#      FromPort: 9092
+#      ToPort: 9092
+#      SourceSecurityGroupId: !Ref PosIntegrationSecurityGroup
+#      GroupId: !Ref SecurityGroup
+#
+#  # Soldi
+#  Soldi2181IngressRule:
+#    Type: AWS::EC2::SecurityGroupIngress
+#    Properties:
+#      IpProtocol: tcp
+#      FromPort: 2181
+#      ToPort: 2181
+#      SourceSecurityGroupId: !Ref SoldiSecurityGroup
+#      GroupId: !Ref SecurityGroup
+#
+#  Soldi9092IngressRule:
+#    Type: AWS::EC2::SecurityGroupIngress
+#    Properties:
+#      IpProtocol: tcp
+#      FromPort: 9092
+#      ToPort: 9092
+#      SourceSecurityGroupId: !Ref SoldiSecurityGroup
+#      GroupId: !Ref SecurityGroup
+#
+#  # Super Portal
+#  SuperPortal2181IngressRule:
+#    Type: AWS::EC2::SecurityGroupIngress
+#    Properties:
+#      IpProtocol: tcp
+#      FromPort: 2181
+#      ToPort: 2181
+#      SourceSecurityGroupId: !Ref SuperPortalSecurityGroup
+#      GroupId: !Ref SecurityGroup
+#
+#  SuperPortal9092IngressRule:
+#    Type: AWS::EC2::SecurityGroupIngress
+#    Properties:
+#      IpProtocol: tcp
+#      FromPort: 9092
+#      ToPort: 9092
+#      SourceSecurityGroupId: !Ref SuperPortalSecurityGroup
+#      GroupId: !Ref SecurityGroup
+#
+  BastionHostIngressRule:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      IpProtocol: tcp
+      ToPort: 22
+      FromPort: 22
+      SourceSecurityGroupId: sg-6b258c0d
+      GroupId: !Ref SecurityGroup
+
+Outputs:
+  SecurityGroup:
+    Description: The Kafka App Security Group
+    Value:  !Ref SecurityGroup
+    # Export:
+    #   Name: !Sub "${AWS::StackName}-SecurityGroup"
