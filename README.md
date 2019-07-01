@@ -34,7 +34,7 @@ Template Design must have these features:
 
 # Solution
 
-These Templates are in YAML language and have generic format. These template helps us to deploy 3 kind of different environments
+These Templates are in YAML language and have generic format. These template helps us to deploy 3 or more, kind of different environments
 - Production
 - UAT
 - Test
@@ -63,3 +63,15 @@ You can define what environment you wanted to build and it will use that word in
 - Elastic Search
 
 These resources are being mapped with other resources automatically by importing their values.
+
+# Note
+These templates required some minor changes so please read the template that how these are written and then start implementation. Basic help is mention below.
+
+# Basic Help
+- First Create 2 s3 buckets by using folder number 1 as per your required name and upload all templates to 1 bucket leave blank other bucket 
+- Then run IAM-Role-FlowLogs.yaml from Standalone folder
+- Run VPC master
+- Run Rout53 master
+- Run Security Group master
+- Run all master one by one
+- Run remaining Standalone templates
