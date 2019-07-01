@@ -199,7 +199,7 @@ Resources:
         PrivateSubnetCCIDR: !Ref PrivateSubnetCCIDR
         DNSServers: !Ref DNSServers
         DNSDomainName: !Ref DNSDomainName
-# Paste the output of arn from the   IAM-Role-FlowLogs file
+# Paste the output of arn from the IAM-Role-FlowLogs Template
         FlowLogsARN: arn:aws:iam::XXXXXXXXXXXX:role/Flow-Logs-Role
 
 # Create custom route tables for public and private subnets
