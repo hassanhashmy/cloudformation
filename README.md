@@ -8,6 +8,7 @@ Need an implementation on AWS which will be track by SCM and implement all chang
 - Production
 - UAT
 - Test
+
 Infrastructure code must be remain same and Infrastructure naming convention must be user friendly and easy to manageable by using 1 account or 2 accounts doesn't mater. Templates should work in all environments and it must have some parameters and dynamic values which can be change or may vary.
 We were given 2 AWS accounts in our case 1 for totally Production in which some highly sensitive data like Credit Card, Home address, phone numbers, emails will be processed, and the other 1 should be for UAT and Test. But we have to design templates like all environments are in same account so we have to differentiate them.
 Which means we have to design re-usable templates.
