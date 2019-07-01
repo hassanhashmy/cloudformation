@@ -6,7 +6,7 @@ Parameters:
   S3BucketName:
     Description: The name of the Amazon S3 bucket
     Type: String
-    Default: DCHash2buildbucket
+    Default: dchash2buildbucket
 
   # Tagging Parameters
   Environment:
