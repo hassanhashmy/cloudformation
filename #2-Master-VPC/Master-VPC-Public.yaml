@@ -127,7 +127,7 @@ Parameters:
     MinLength: '3'
     MaxLength: '25'
     AllowedPattern: "[a-zA-Z0-9]+\\..+"
-    Default: uat.alveo.local
+    Default: uat.ClientPlatformName.local
 
 # Parameter Grouping
 Metadata:
