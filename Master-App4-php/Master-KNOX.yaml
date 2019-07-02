@@ -1,5 +1,5 @@
 # Template created by hash
-Description: POSIntegration Application Stack (incl. Classic Load Balancer, Security Groups, Auto Scaling Group and Launch Configuration)
+Description: App4-php Application Stack (incl. Classic Load Balancer, Security Groups, Auto Scaling Group and Launch Configuration)
 
 # This Master Template creates the following resources:
 #   Load Balancer Security Group
@@ -55,11 +55,11 @@ Parameters:
 
   SecurityGroupTemplateFile:
     Type: String
-    Default: EC2-SecurityGroup-App-POSIntegration.yaml
+    Default: EC2-SecurityGroup-App-App4-php.yaml
 
   IAMRoleTemplateFile:
     Type: String
-    Default: IAM-Role-POSIntegration.yaml
+    Default: IAM-Role-App4-php.yaml
 
   EC2InstanceTemplateFile:
     Description: Provide to build 3 standalone EC2 instances for this application
@@ -69,7 +69,7 @@ Parameters:
   LaunchConfigurationTemplateFile:
     Description: Provide to build an Auto-Scaling Group for this application
     Type: String
-    Default: EC2-LaunchConfiguration-POSIntegration.yaml
+    Default: EC2-LaunchConfiguration-App4-php.yaml
 
   AutoScalingTemplateFile:
     Description: Provide to build an Auto-Scaling Group for this application
@@ -95,7 +95,7 @@ Parameters:
   # Classic Load Balancer Parameters
 
   HostName:
-    Default: uatpi
+    Default: uatkn
     Type: String
     Description: Record Name for the new Resource Record in the Hosted Zone for the ELB or CloudFront distribution
 
@@ -104,6 +104,7 @@ Parameters:
     MinValue: '0'
     Type: Number
     Description: Set the timeout value for Elastic Load Balancer draining policy if required
+    MinValue: '0'
     MaxValue: '3600'
 
   InstancePort:
@@ -404,7 +405,7 @@ Parameters:
     Type: String
     MinLength: '3'
     MaxLength: '255'
-    Default: POSIntegration
+    Default: App4-php
 
 Metadata:
   AWS::CloudFormation::Interface:
@@ -536,7 +537,7 @@ Resources:
         HassanPakistan1: XX2.X76.X3X.XX8/32
         HassanPakistan2: XX2.X76.X7X.XX1/32
 
-  # POSIntegration Classic ELB
+  # App4-php Classic ELB
   ElasticLoadBalancer:
     Type: AWS::CloudFormation::Stack
     Properties:
@@ -592,7 +593,7 @@ Resources:
         S3BucketPrefix: !Ref Component
         LogBucketName: !Ref LogBucketName
 
-  # POSIntegration EC2 Instances Security Group
+  # App4-php EC2 Instances Security Group
   SecurityGroup:
     Type: AWS::CloudFormation::Stack
     Properties:
@@ -607,13 +608,13 @@ Resources:
           Fn::ImportValue: !Sub ${VPCStackName}-VPCID
         ELBSecurityGroup: !GetAtt [ SecurityGroupELB, Outputs.SecurityGroup ]
         ElastiCacheSecurityGroup:
-           Fn::ImportValue: !Sub ${ElastiCacheStackName}-SecurityGroup
+          Fn::ImportValue: !Sub ${ElastiCacheStackName}-SecurityGroup
         RDSSecurityGroup:
-           Fn::ImportValue: !Sub ${RDSStackName}-SecurityGroup
+          Fn::ImportValue: !Sub ${RDSStackName}-SecurityGroup
         KafkaSecurityGroup:
-           Fn::ImportValue: !Sub ${KafkaStackName}-SecurityGroup
+          Fn::ImportValue: !Sub ${KafkaStackName}-SecurityGroup
 
-  #POSIntegration IAM Role
+  #App4-php IAM Role
   IAMRole:
     Type: AWS::CloudFormation::Stack
     Properties:
@@ -685,7 +686,7 @@ Resources:
         SubnetId:
           Fn::ImportValue: !Sub ${VPCStackName}-PrivateSubnetC
 
-  #POSIntegration Application Launch Configuration
+  #App4-php Application Launch Configuration
   LaunchConfiguration:
     Type: AWS::CloudFormation::Stack
     Condition: IsASG
@@ -703,7 +704,7 @@ Resources:
         EC2KeyPair: !Ref EC2KeyPair
         InstanceType: !Ref InstanceType
 
-  #POSIntegration Application AutoScaling Group
+  #App4-php Application AutoScaling Group
   AutoScalingGroup:
     Type: AWS::CloudFormation::Stack
     Condition: IsASG
@@ -778,25 +779,25 @@ Resources:
 
 Outputs:
   SecurityGroup:
-    Description: The POSIntegration Security Group
+    Description: The App4-php Security Group
     Value:  !GetAtt [ SecurityGroup, Outputs.SecurityGroup ]
     Export:
       Name: !Sub "${AWS::StackName}-SecurityGroup"
 
   ELBDNSName:
-    Description: POSIntegration ELB DNS Name
+    Description: App4-php ELB DNS Name
     Value: !GetAtt [ ElasticLoadBalancer, Outputs.ELBDNSName ]
     Export:
       Name: !Sub "${AWS::StackName}-ELBDNSName"
 
   CloudFrontDistribution:
-    Description: POSIntegration CloudFront Distribution
+    Description: App4-php CloudFront Distribution
     Value: !GetAtt [ Distribution, Outputs.Distribution ]
     Export:
       Name: !Sub "${AWS::StackName}-CloudFrontDistribution"
 
   CloudFrontDNSName:
-    Description: POSIntegration CloudFront DNS
+    Description: App4-php CloudFront DNS
     Value: !GetAtt [ Distribution, Outputs.CloudFrontDNSName ]
     Export:
       Name: !Sub "${AWS::StackName}-CloudFrontDNSName"

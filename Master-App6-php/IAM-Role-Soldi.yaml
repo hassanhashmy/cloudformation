@@ -1,5 +1,5 @@
 # Template created by hash
-Description: IAM Role for DCHash2 Amplify Application
+Description: IAM Role for DCHash2 App6-php Application
 Parameters:
 
   # Add additional ManagedPolicy parameters if more than one policy will be attached
@@ -28,16 +28,19 @@ Parameters:
     Type: String
     MinLength: '3'
     MaxLength: '255'
+    Default: BrandName
 
   Application:
     Type: String
     MinLength: '3'
     MaxLength: '255'
+    Default: SomePlatform
 
   Component:
     Type: String
     MinLength: '3'
     MaxLength: '255'
+    Default: App6-php
 
 Resources:
   Role:
@@ -56,10 +59,10 @@ Resources:
       ManagedPolicyArns:
       - !Ref IAMManagedPolicyEC2
       - arn:aws:iam::aws:policy/service-role/AmazonEC2RoleforSSM
-      - arn:aws:iam::aws:policy/AmazonElastiCacheFullAccess
       - arn:aws:iam::aws:policy/AutoScalingFullAccess
-      - arn:aws:iam::aws:policy/AmazonESFullAccess
+      - arn:aws:iam::aws:policy/AmazonElastiCacheFullAccess
       - arn:aws:iam::aws:policy/service-role/AmazonEC2RoleforAWSCodeDeploy
+      - arn:aws:iam::aws:policy/AmazonESFullAccess
       RoleName: !Sub ${Environment}-${Component}-${Application}-Role
 
   InstanceProfile:
@@ -68,14 +71,13 @@ Resources:
       Path: /
       Roles:
       - !Ref Role
-      InstanceProfileName: !Sub ${Environment}-${Component}-InstanceProfile
 
 Outputs:
   IAMRoleName:
     Value: !Ref Role
   IAMRoleARN:
-    Value: !GetAtt [ Role, "Arn" ]
+    Value: !GetAtt [ "Role", "Arn" ]
   InstanceProfileName:
     Value: !Ref InstanceProfile
   InstanceProfileARN:
-    Value: !GetAtt [ InstanceProfile, Arn ]
+    Value: !GetAtt [ "InstanceProfile", "Arn" ]

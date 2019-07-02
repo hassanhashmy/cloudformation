@@ -12,7 +12,7 @@ Parameters:
   InstanceProfile:
     Description: ARN of the Instance Profile
     Type: String
-    Default: arn:aws:iam::XXXXXXXXXXXX:instance-profile/UAT-SuperPortal-LaunchConfiguration-Z8RFZJTXVYLL-InstanceProfile-XWLR4LH7HAB6
+    Default: arn:aws:iam::XXXXXXXXXXXX:instance-profile/UAT-App7-php-LaunchConfiguration-Z8RFZJTXVYLL-InstanceProfile-XWLR4LH7HAB6
 
   InstanceType:
     Description: The EC2 instance type to launch
@@ -132,7 +132,7 @@ Resources:
           systemctl start httpd
           systemctl enable php-fpm
           systemctl start php-fpm
-          mkdir -p /var/www/SomePlatform-project/superportal
+          mkdir -p /var/www/SomePlatform-project/App7-php
           chown -R apache:apache /var/www/SomePlatform-project
           iptables -A INPUT -p tcp --dport 80 -m state --state NEW -j ACCEPT
           iptables -A INPUT -p tcp --dport 443 -m state --state NEW -j ACCEPT

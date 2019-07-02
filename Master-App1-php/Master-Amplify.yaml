@@ -1,5 +1,5 @@
 # Template created by hash
-Description: DataConsumer Application Stack (incl. Classic Load Balancer, Security Groups, Auto Scaling Group and Launch Configuration)
+Description: App1-php Application Stack (incl. Classic Load Balancer, Security Groups, Auto Scaling Group and Launch Configuration)
 
 # This Master Template creates the following resources:
 #   Load Balancer Security Group
@@ -55,21 +55,21 @@ Parameters:
 
   SecurityGroupTemplateFile:
     Type: String
-    Default: EC2-SecurityGroup-App-DataConsumer.yaml
+    Default: EC2-SecurityGroup-App-App1-php.yaml
 
   IAMRoleTemplateFile:
     Type: String
-    Default: IAM-Role-DataConsumer.yaml
+    Default: IAM-Role-App1-php.yaml
 
   EC2InstanceTemplateFile:
     Description: Provide to build 3 standalone EC2 instances for this application
     Type: String
-    Default: EC2-Standalone-DCHash2.yaml
+    Default: EC2-Standalone-App1-php.yaml
 
   LaunchConfigurationTemplateFile:
     Description: Provide to build an Auto-Scaling Group for this application
     Type: String
-    Default: EC2-LaunchConfiguration-DataConsumer.yaml
+    Default: EC2-LaunchConfiguration-App1-php.yaml
 
   AutoScalingTemplateFile:
     Description: Provide to build an Auto-Scaling Group for this application
@@ -95,7 +95,7 @@ Parameters:
   # Classic Load Balancer Parameters
 
   HostName:
-    Default: uatdc
+    Default: uatam
     Type: String
     Description: Record Name for the new Resource Record in the Hosted Zone for the ELB or CloudFront distribution
 
@@ -171,7 +171,7 @@ Parameters:
     Description: Consecutive successful checks before marking instance healthy.
 
   SSLCertArn:
-    Default: 'arn:aws:acm:ap-southeast-2:XXXXXXXXXXXX:certificate/XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX'
+    Default: 'arn:aws:acm:ap-southeast-2:XXXXXXXXXXXX:certificate/XXXXXXXX-2142-45f7-948a-296c5f176bc9'
     ConstraintDescription: Must be an existing SSL Name.
     Type: String
     Description: SSL Certificate Name. Full ARN required.
@@ -257,12 +257,17 @@ Parameters:
   ImageId:
     Description: The Amazon Machine Image Id
     Type: String
-    Default: ami-XXXXXXXX # SomeDCHash2BaseImage
+    Default: ami-XXXXXXXXX # SomeDCHash2BaseImage
 
   EC2KeyPair:
     Description: The EC2 Keypair to associated to the EC2 Instances (Leave blank for no key pair)
     Type: String # Note have to use an untyped parameter as AWS::EC2::KeyPair::KeyName is not optional
     Default: DCHash2-TestKey
+
+  AppBucket:
+    Description: The S3 bucket containing the application package
+    Type: String
+    Default: DCHash2-nonprod-applications
 
   # Note:
   # Only includes current generation General Purpose, Memory and Compute Optimised instance types that allow for EBS Encryption.
@@ -405,7 +410,7 @@ Parameters:
     Type: String
     MinLength: '3'
     MaxLength: '255'
-    Default: DataConsumer
+    Default: App1-php
 
 Metadata:
   AWS::CloudFormation::Interface:
@@ -450,6 +455,7 @@ Metadata:
       - ImageId
       - EC2KeyPair
       - InstanceType
+      - AppBucket
     - Label:
         default: Load Balancer General Configuration
       Parameters:
@@ -537,7 +543,7 @@ Resources:
         HassanPakistan1: XX2.X76.X3X.XX8/32
         HassanPakistan2: XX2.X76.X7X.XX1/32
 
-  # DataConsumer Classic ELB
+  # App1-php Classic ELB
   ElasticLoadBalancer:
     Type: AWS::CloudFormation::Stack
     Properties:
@@ -584,8 +590,8 @@ Resources:
             Fn::Join:
             - ","
             - - !GetAtt [ EC2InstanceA, Outputs.Instance ]
-              - !GetAtt [ EC2InstanceB, Outputs.Instance ]
-              - !GetAtt [ EC2InstanceC, Outputs.Instance ]
+#              - !GetAtt [ EC2InstanceB, Outputs.Instance ]
+#              - !GetAtt [ EC2InstanceC, Outputs.Instance ]
           -
             ''
         ASGTargets: !Ref ASGTargets
@@ -593,7 +599,7 @@ Resources:
         S3BucketPrefix: !Ref Component
         LogBucketName: !Ref LogBucketName
 
-  # DataConsumer EC2 Instances Security Group
+  # App1-php EC2 Instances Security Group
   SecurityGroup:
     Type: AWS::CloudFormation::Stack
     Properties:
@@ -614,7 +620,7 @@ Resources:
         KafkaSecurityGroup:
           Fn::ImportValue: !Sub ${KafkaStackName}-SecurityGroup
 
-  #DataConsumer IAM Role
+  #App1-php IAM Role
   IAMRole:
     Type: AWS::CloudFormation::Stack
     Properties:
@@ -639,7 +645,7 @@ Resources:
         BusinessUnit: !Ref BusinessUnit
         Department: !Ref Department
         Application: !Ref Application
-        Component: !Sub ${Component}-A
+        Component: !Ref Component
         ImageId: !Ref ImageId
         InstanceProfile: !GetAtt [ IAMRole, Outputs.InstanceProfileName ]
         InstanceType: !Ref InstanceType
@@ -647,46 +653,48 @@ Resources:
         SecurityGroup: !GetAtt [ SecurityGroup, Outputs.SecurityGroup ]
         SubnetId:
           Fn::ImportValue: !Sub ${VPCStackName}-PrivateSubnetA
+        AppBucket: !Ref AppBucket
+        AvailabilityZone: A
 
-  EC2InstanceB:
-    Type: AWS::CloudFormation::Stack
-    Condition: IsNotASG
-    Properties:
-      TemplateURL: !Sub https://s3-ap-southeast-2.amazonaws.com/${BuildBucket}/${EC2InstanceTemplateFile}
-      Parameters:
-        Environment: !Ref Environment
-        BusinessUnit: !Ref BusinessUnit
-        Department: !Ref Department
-        Application: !Ref Application
-        Component: !Sub ${Component}-B
-        ImageId: !Ref ImageId
-        InstanceProfile: !GetAtt [ IAMRole, Outputs.InstanceProfileName ]
-        InstanceType: !Ref InstanceType
-        KeyName: !Ref EC2KeyPair
-        SecurityGroup: !GetAtt [ SecurityGroup, Outputs.SecurityGroup ]
-        SubnetId:
-          Fn::ImportValue: !Sub ${VPCStackName}-PrivateSubnetB
+#  EC2InstanceB:
+#    Type: AWS::CloudFormation::Stack
+#    Condition: IsNotASG
+#    Properties:
+#      TemplateURL: !Sub https://s3-ap-southeast-2.amazonaws.com/${BuildBucket}/${EC2InstanceTemplateFile}
+#      Parameters:
+#        Environment: !Ref Environment
+#        BusinessUnit: !Ref BusinessUnit
+#        Department: !Ref Department
+#        Application: !Ref Application
+#        Component: !Sub ${Component}-B
+#        ImageId: !Ref ImageId
+#        InstanceProfile: !GetAtt [ IAMRole, Outputs.InstanceProfileName ]
+#        InstanceType: !Ref InstanceType
+#        KeyName: !Ref EC2KeyPair
+#        SecurityGroup: !GetAtt [ SecurityGroup, Outputs.SecurityGroup ]
+#        SubnetId:
+#          Fn::ImportValue: !Sub ${VPCStackName}-PrivateSubnetB
+#
+#  EC2InstanceC:
+#    Type: AWS::CloudFormation::Stack
+#    Condition: IsNotASG
+#    Properties:
+#      TemplateURL: !Sub https://s3-ap-southeast-2.amazonaws.com/${BuildBucket}/${EC2InstanceTemplateFile}
+#      Parameters:
+#        Environment: !Ref Environment
+#        BusinessUnit: !Ref BusinessUnit
+#        Department: !Ref Department
+#        Application: !Ref Application
+#        Component: !Sub ${Component}-C
+#        ImageId: !Ref ImageId
+#        InstanceProfile: !GetAtt [ IAMRole, Outputs.InstanceProfileName ]
+#        InstanceType: !Ref InstanceType
+#        KeyName: !Ref EC2KeyPair
+#        SecurityGroup: !GetAtt [ SecurityGroup, Outputs.SecurityGroup ]
+#        SubnetId:
+#          Fn::ImportValue: !Sub ${VPCStackName}-PrivateSubnetC
 
-  EC2InstanceC:
-    Type: AWS::CloudFormation::Stack
-    Condition: IsNotASG
-    Properties:
-      TemplateURL: !Sub https://s3-ap-southeast-2.amazonaws.com/${BuildBucket}/${EC2InstanceTemplateFile}
-      Parameters:
-        Environment: !Ref Environment
-        BusinessUnit: !Ref BusinessUnit
-        Department: !Ref Department
-        Application: !Ref Application
-        Component: !Sub ${Component}-C
-        ImageId: !Ref ImageId
-        InstanceProfile: !GetAtt [ IAMRole, Outputs.InstanceProfileName ]
-        InstanceType: !Ref InstanceType
-        KeyName: !Ref EC2KeyPair
-        SecurityGroup: !GetAtt [ SecurityGroup, Outputs.SecurityGroup ]
-        SubnetId:
-          Fn::ImportValue: !Sub ${VPCStackName}-PrivateSubnetC
-
-  #DataConsumer Application Launch Configuration
+  #App1-php Application Launch Configuration
   LaunchConfiguration:
     Type: AWS::CloudFormation::Stack
     Condition: IsASG
@@ -704,7 +712,7 @@ Resources:
         EC2KeyPair: !Ref EC2KeyPair
         InstanceType: !Ref InstanceType
 
-  #DataConsumer Application AutoScaling Group
+  #App1-php Application AutoScaling Group
   AutoScalingGroup:
     Type: AWS::CloudFormation::Stack
     Condition: IsASG
@@ -779,25 +787,25 @@ Resources:
 
 Outputs:
   SecurityGroup:
-    Description: The DataConsumer Security Group
+    Description: The App1-php Security Group
     Value:  !GetAtt [ SecurityGroup, Outputs.SecurityGroup ]
     Export:
       Name: !Sub "${AWS::StackName}-SecurityGroup"
 
   ELBDNSName:
-    Description: DataConsumer ELB DNS Name
+    Description: App1-php ELB DNS Name
     Value: !GetAtt [ ElasticLoadBalancer, Outputs.ELBDNSName ]
     Export:
       Name: !Sub "${AWS::StackName}-ELBDNSName"
 
   CloudFrontDistribution:
-    Description: DataConsumer CloudFront Distribution
+    Description: App1-php CloudFront Distribution
     Value: !GetAtt [ Distribution, Outputs.Distribution ]
     Export:
       Name: !Sub "${AWS::StackName}-CloudFrontDistribution"
 
   CloudFrontDNSName:
-    Description: DataConsumer CloudFront DNS
+    Description: App1-php CloudFront DNS
     Value: !GetAtt [ Distribution, Outputs.CloudFrontDNSName ]
     Export:
       Name: !Sub "${AWS::StackName}-CloudFrontDNSName"

@@ -14,40 +14,40 @@ Parameters:
     Type: String
     Default: UAT-Route53
 
-#  AmplifyStackName:
-#    Description: Stack Name that built Amplify
+#  App1-phpStackName:
+#    Description: Stack Name that built App1-php
 #    Type: String
-#    Default: UAT-Amplify
+#    Default: UAT-App1-php
 #
-#  DataConsumerStackName:
+#  App2-phpStackName:
 #    Description: Stack Name that built Data Consumer
 #    Type: String
-#    Default: UAT-DataConsumer
+#    Default: UAT-App2-php
 #
-#  DataIngestionStackName:
+#  App3-javaStackName:
 #    Description: Stack Name that built Data Ingestion
 #    Type: String
-#    Default: UAT-DataIngestion
+#    Default: UAT-App3-java
 #
-#  KnoxStackName:
-#    Description: Stack Name that built KNOX
+#  App4-phpStackName:
+#    Description: Stack Name that built App4-php
 #    Type: String
-#    Default: UAT-KNOX
+#    Default: UAT-App4-php
 #
-#  PosIntegrationStackName:
+#  App5-phpStackName:
 #    Description: Stack Name that built POS Integration
 #    Type: String
-#    Default: UAT-POSIntegration
+#    Default: UAT-App5-php
 #
-#  SoldiStackName:
-#    Description: Stack Name that built Soldi
+#  App6-phpStackName:
+#    Description: Stack Name that built App6-php
 #    Type: String
-#    Default: UAT-Soldi
+#    Default: UAT-App6-php
 #
-#  SuperPortalStackName:
-#    Description: Stack Name that built SuperPortal
+#  App7-phpStackName:
+#    Description: Stack Name that built App7-php
 #    Type: String
-#    Default: UAT-SuperPortal
+#    Default: UAT-App7-php
 
   #Build Parameters
   BuildBucket:
@@ -181,13 +181,13 @@ Metadata:
       Parameters:
       - VPCStackName
       - DomainStackName
-#      - AmplifyStackName
-#      - DataConsumerStackName
-#      - DataIngestionStackName
-#      - KnoxStackName
-#      - PosIntegrationStackName
-#      - SoldiStackName
-#      - SuperPortalStackName
+#      - App1-phpStackName
+#      - App2-phpStackName
+#      - App3-javaStackName
+#      - App4-phpStackName
+#      - App5-phpStackName
+#      - App6-phpStackName
+#      - App7-phpStackName
     - Label:
         default: ElastiCache Redis Parameters
       Parameters:
@@ -224,20 +224,20 @@ Resources:
         Component: !Ref Component
         VPCId:
           Fn::ImportValue: !Sub ${VPCStackName}-VPCID
-#        AmplifySecurityGroup:
-#          Fn::ImportValue: !Sub ${AmplifyStackName}-SecurityGroup
-#        DataConsumerSecurityGroup:
-#          Fn::ImportValue: !Sub ${DataConsumerStackName}-SecurityGroup
-#        DataIngestionSecurityGroup:
-#          Fn::ImportValue: !Sub ${DataIngestionStackName}-SecurityGroup
-#        KnoxSecurityGroup:
-#          Fn::ImportValue: !Sub ${KnoxStackName}-SecurityGroup
-#        PosIntegrationSecurityGroup:
-#          Fn::ImportValue: !Sub ${PosIntegrationStackName}-SecurityGroup
-#        SoldiSecurityGroup:
-#          Fn::ImportValue: !Sub ${SoldiStackName}-SecurityGroup
-#        SuperPortalSecurityGroup:
-#          Fn::ImportValue: !Sub ${SuperPortalStackName}-SecurityGroup
+#        App1-phpSecurityGroup:
+#          Fn::ImportValue: !Sub ${App1-phpStackName}-SecurityGroup
+#        App2-phpSecurityGroup:
+#          Fn::ImportValue: !Sub ${App2-phpStackName}-SecurityGroup
+#        App3-javaSecurityGroup:
+#          Fn::ImportValue: !Sub ${App3-javaStackName}-SecurityGroup
+#        App4-phpSecurityGroup:
+#          Fn::ImportValue: !Sub ${App4-phpStackName}-SecurityGroup
+#        App5-phpSecurityGroup:
+#          Fn::ImportValue: !Sub ${App5-phpStackName}-SecurityGroup
+#        App6-phpSecurityGroup:
+#          Fn::ImportValue: !Sub ${App6-phpStackName}-SecurityGroup
+#        App7-phpSecurityGroup:
+#          Fn::ImportValue: !Sub ${App7-phpStackName}-SecurityGroup
 
   # Create Redis Replication Group cluster
   ElastiCacheRedisCluster:
@@ -290,7 +290,7 @@ Outputs:
       Name: !Sub "${AWS::StackName}-CacheConnection"
 
   SecurityGroup:
-    Description: The Amplify Security Group
+    Description: The App1-php Security Group
     Value:  !GetAtt [ SecurityGroup, Outputs.SecurityGroup ]
     Export:
       Name: !Sub "${AWS::StackName}-SecurityGroup"

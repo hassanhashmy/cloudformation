@@ -1,5 +1,5 @@
 # Template created by hash
-Description: Security Group for Amplify EC2 Instances
+Description: Security Group for App1-php EC2 Instances
 
 Parameters:
 
@@ -8,7 +8,7 @@ Parameters:
     Type: AWS::EC2::VPC::Id
 
   ELBSecurityGroup:
-    Description: The ELB Security Group for the Amplify ELB
+    Description: The ELB Security Group for the App1-php ELB
     Type: AWS::EC2::SecurityGroup::Id
 
   ElastiCacheSecurityGroup:
@@ -52,7 +52,7 @@ Parameters:
     Type: String
     MinLength: '3'
     MaxLength: '255'
-    Default: Amplify
+    Default: App1-php
 
 Resources:
 
@@ -154,6 +154,6 @@ Resources:
 
 Outputs:
   SecurityGroup:
-    Description: The App Amplify Security Group
+    Description: The App App1-php Security Group
 #    Value:  !GetAtt [ SecurityGroup.GroupId ]
     Value: !Ref SecurityGroup

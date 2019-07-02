@@ -33,40 +33,40 @@ Parameters:
     Type: String
     Default: UAT-Kafka
 
-  AmplifyStackName:
-    Description: Stack Name that created Amplify App
+  App1-phpStackName:
+    Description: Stack Name that created App1-php App
     Type: String
-    Default: UAT-Amplify
+    Default: UAT-App1-php
 
-  DataConsumerStackName:
-    Description: Stack Name that created DataConsumer App
+  App2-phpStackName:
+    Description: Stack Name that created App2-php App
     Type: String
-    Default: UAT-DataConsumer
+    Default: UAT-App2-php
 
-  DataIngestionStackName:
-    Description: Stack Name that created DataIngestion App
+  App3-javaStackName:
+    Description: Stack Name that created App3-java App
     Type: String
-    Default: UAT-DataIngestion
+    Default: UAT-App3-java
 
-  KNOXStackName:
-    Description: Stack Name that created KNOX App
+  App4-phpStackName:
+    Description: Stack Name that created App4-php App
     Type: String
-    Default: UAT-KNOX
+    Default: UAT-App4-php
 
-  POSIntegrationStackName:
-    Description: Stack Name that created POSIntegration App
+  App5-phpStackName:
+    Description: Stack Name that created App5-php App
     Type: String
-    Default: UAT-POSIntegration
+    Default: UAT-App5-php
 
-  SoldiStackName:
-    Description: Stack Name that created Soldi App
+  App6-phpStackName:
+    Description: Stack Name that created App6-php App
     Type: String
-    Default: UAT-Soldi
+    Default: UAT-App6-php
 
-  SuperPortalStackName:
-    Description: Stack Name that created SuperPortal App
+  App7-phpStackName:
+    Description: Stack Name that created App7-php App
     Type: String
-    Default: UAT-SuperPortal
+    Default: UAT-App7-php
 
   #Build Configuration Parameters
   BuildBucket:
@@ -191,13 +191,13 @@ Metadata:
       - IAMManagedPolicyEC2StackName
       - RDSStackName
       - KafkaStackName
-      - AmplifyStackName
-      - DataConsumerStackName
-      - DataIngestionStackName
-      - KNOXStackName
-      - POSIntegrationStackName
-      - SoldiStackName
-      - SuperPortalStackName
+      - App1-phpStackName
+      - App2-phpStackName
+      - App3-javaStackName
+      - App4-phpStackName
+      - App5-phpStackName
+      - App6-phpStackName
+      - App7-phpStackName
     - Label:
         default: EC2 Instance Configuration
       Parameters:
@@ -232,20 +232,20 @@ Resources:
           Fn::ImportValue: !Sub ${RDSStackName}-SecurityGroup
         KafkaSecurityGroup:
           Fn::ImportValue: !Sub ${KafkaStackName}-SecurityGroup
-        AmplifySecurityGroup:
-          Fn::ImportValue: !Sub ${AmplifyStackName}-SecurityGroup
-        DataConsumerSecurityGroup:
-          Fn::ImportValue: !Sub ${DataConsumerStackName}-SecurityGroup
-        DataIngestionSecurityGroup:
-          Fn::ImportValue: !Sub ${DataIngestionStackName}-SecurityGroup
-        KNOXSecurityGroup:
-          Fn::ImportValue: !Sub ${KNOXStackName}-SecurityGroup
-        POSIntegrationSecurityGroup:
-          Fn::ImportValue: !Sub ${POSIntegrationStackName}-SecurityGroup
-        SoldiSecurityGroup:
-          Fn::ImportValue: !Sub ${SoldiStackName}-SecurityGroup
-        SuperPortalSecurityGroup:
-          Fn::ImportValue: !Sub ${SuperPortalStackName}-SecurityGroup
+        App1-phpSecurityGroup:
+          Fn::ImportValue: !Sub ${App1-phpStackName}-SecurityGroup
+        App2-phpSecurityGroup:
+          Fn::ImportValue: !Sub ${App2-phpStackName}-SecurityGroup
+        App3-javaSecurityGroup:
+          Fn::ImportValue: !Sub ${App3-javaStackName}-SecurityGroup
+        App4-phpSecurityGroup:
+          Fn::ImportValue: !Sub ${App4-phpStackName}-SecurityGroup
+        App5-phpSecurityGroup:
+          Fn::ImportValue: !Sub ${App5-phpStackName}-SecurityGroup
+        App6-phpSecurityGroup:
+          Fn::ImportValue: !Sub ${App6-phpStackName}-SecurityGroup
+        App7-phpSecurityGroup:
+          Fn::ImportValue: !Sub ${App7-phpStackName}-SecurityGroup
         SomeOffice1: 20X.1X.XXX.1/32
         SomeOffice2: 20X.X4.XXX.1/32
         SomeOffice3: XXX.XX.2X.XX/32

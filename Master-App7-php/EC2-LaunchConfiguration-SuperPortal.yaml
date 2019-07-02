@@ -1,5 +1,5 @@
 # Template created by hash
-Description: Launch Configuration for SuperPortal EC2 Instances
+Description: Launch Configuration for App7-php EC2 Instances
 
 Parameters:
 
@@ -82,7 +82,7 @@ Parameters:
     Type: String
     MinLength: '3'
     MaxLength: '255'
-    Default: SuperPortal
+    Default: App7-php
 
 Conditions:
   HasEC2KeyPair: !Not [!Equals ['', !Ref EC2KeyPair]]
@@ -112,7 +112,7 @@ Resources:
             systemctl start httpd
             systemctl enable php-fpm
             systemctl start php-fpm
-            mkdir -p /var/www/SomePlatform-project/superportal
+            mkdir -p /var/www/SomePlatform-project/App7-php
             chown -R apache:apache /var/www/SomePlatform-project
             iptables -A INPUT -p tcp --dport 80 -m state --state NEW -j ACCEPT
             iptables -A INPUT -p tcp --dport 443 -m state --state NEW -j ACCEPT
@@ -136,9 +136,9 @@ Resources:
             ./install auto
             systemctl start codedeploy-agent
 
-            aws s3 cp s3://DCHash2-nonprod-applications/superportal-latest.tgz /var/www/SomePlatform-project/
+            aws s3 cp s3://DCHash2-nonprod-applications/App7-php-latest.tgz /var/www/SomePlatform-project/
             sleep 60
-            tar -vxzf /var/www/SomePlatform-project/superportal-latest.tgz
+            tar -vxzf /var/www/SomePlatform-project/App7-php-latest.tgz
             chown -R apache:apache /var/www/SomePlatform-project
 
             #Notify AutoScaling Group of installation complete

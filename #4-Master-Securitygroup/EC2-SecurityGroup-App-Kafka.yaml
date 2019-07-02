@@ -14,25 +14,25 @@ Parameters:
 
   # Security groups allowed ingress to Kafka application
 
-#  AmplifySecurityGroup:
+#  App1-phpSecurityGroup:
 #    Type: AWS::EC2::SecurityGroup::Id
 #
-#  DataConsumerSecurityGroup:
+#  App2-phpSecurityGroup:
 #    Type: AWS::EC2::SecurityGroup::Id
 #
-#  DataIngestionSecurityGroup:
+#  App3-javaSecurityGroup:
 #    Type: AWS::EC2::SecurityGroup::Id
 #
-#  KnoxSecurityGroup:
+#  App4-phpSecurityGroup:
 #    Type: AWS::EC2::SecurityGroup::Id
 #
-#  PosIntegrationSecurityGroup:
+#  App5-phpSecurityGroup:
 #    Type: AWS::EC2::SecurityGroup::Id
 #
-#  SoldiSecurityGroup:
+#  App6-phpSecurityGroup:
 #    Type: AWS::EC2::SecurityGroup::Id
 #
-#  SuperPortalSecurityGroup:
+#  App7-phpSecurityGroup:
 #    Type: AWS::EC2::SecurityGroup::Id
 
 # Tagging Parameters
@@ -109,89 +109,89 @@ Resources:
       GroupId: !Ref SecurityGroup
 
   # Open ports for applications to access Kafka
-#  Amplify2181IngressRule:
+#  App1-php2181IngressRule:
 #    Type: AWS::EC2::SecurityGroupIngress
 #    Properties:
 #      IpProtocol: tcp
 #      FromPort: 2181
 #      ToPort: 2181
-#      SourceSecurityGroupId: !Ref AmplifySecurityGroup
+#      SourceSecurityGroupId: !Ref App1-phpSecurityGroup
 #      GroupId: !Ref SecurityGroup
 #
-#  Amplify9092IngressRule:
+#  App1-php9092IngressRule:
 #    Type: AWS::EC2::SecurityGroupIngress
 #    Properties:
 #      IpProtocol: tcp
 #      FromPort: 9092
 #      ToPort: 9092
-#      SourceSecurityGroupId: !Ref AmplifySecurityGroup
+#      SourceSecurityGroupId: !Ref App1-phpSecurityGroup
 #      GroupId: !Ref SecurityGroup
 #
 #  # Data Consumer
-#  DataConsumer2181IngressRule:
+#  App2-php2181IngressRule:
 #    Type: AWS::EC2::SecurityGroupIngress
 #    Properties:
 #      IpProtocol: tcp
 #      FromPort: 2181
 #      ToPort: 2181
-#      SourceSecurityGroupId: !Ref DataConsumerSecurityGroup
+#      SourceSecurityGroupId: !Ref App2-phpSecurityGroup
 #      GroupId: !Ref SecurityGroup
 #
-#  DataConsumer9092IngressRule:
+#  App2-php9092IngressRule:
 #    Type: AWS::EC2::SecurityGroupIngress
 #    Properties:
 #      IpProtocol: tcp
 #      FromPort: 9092
 #      ToPort: 9092
-#      SourceSecurityGroupId: !Ref DataConsumerSecurityGroup
+#      SourceSecurityGroupId: !Ref App2-phpSecurityGroup
 #      GroupId: !Ref SecurityGroup
 #
 #  # Data Ingestion
-#  DataIngestion2181IngressRule:
+#  App3-java2181IngressRule:
 #    Type: AWS::EC2::SecurityGroupIngress
 #    Properties:
 #      IpProtocol: tcp
 #      FromPort: 2181
 #      ToPort: 2181
-#      SourceSecurityGroupId: !Ref DataIngestionSecurityGroup
+#      SourceSecurityGroupId: !Ref App3-javaSecurityGroup
 #      GroupId: !Ref SecurityGroup
 #
-#  DataIngestion9092IngressRule:
+#  App3-java9092IngressRule:
 #    Type: AWS::EC2::SecurityGroupIngress
 #    Properties:
 #      IpProtocol: tcp
 #      FromPort: 9092
 #      ToPort: 9092
-#      SourceSecurityGroupId: !Ref DataIngestionSecurityGroup
+#      SourceSecurityGroupId: !Ref App3-javaSecurityGroup
 #      GroupId: !Ref SecurityGroup
 #
-#  # KNOX
-#  Knox2181IngressRule:
+#  # App4-php
+#  App4-php2181IngressRule:
 #    Type: AWS::EC2::SecurityGroupIngress
 #    Properties:
 #      IpProtocol: tcp
 #      FromPort: 2181
 #      ToPort: 2181
-#      SourceSecurityGroupId: !Ref KnoxSecurityGroup
+#      SourceSecurityGroupId: !Ref App4-phpSecurityGroup
 #      GroupId: !Ref SecurityGroup
 #
-#  Knox9092IngressRule:
+#  App4-php9092IngressRule:
 #    Type: AWS::EC2::SecurityGroupIngress
 #    Properties:
 #      IpProtocol: tcp
 #      FromPort: 9092
 #      ToPort: 9092
-#      SourceSecurityGroupId: !Ref KnoxSecurityGroup
+#      SourceSecurityGroupId: !Ref App4-phpSecurityGroup
 #      GroupId: !Ref SecurityGroup
 #
 #  # POS Integration
-#  PosIntegration2181IngressRule:
+#  App5-php2181IngressRule:
 #    Type: AWS::EC2::SecurityGroupIngress
 #    Properties:
 #      IpProtocol: tcp
 #      FromPort: 2181
 #      ToPort: 2181
-#      SourceSecurityGroupId: !Ref PosIntegrationSecurityGroup
+#      SourceSecurityGroupId: !Ref App5-phpSecurityGroup
 #      GroupId: !Ref SecurityGroup
 #
 #  PosInegration9092IngressRule:
@@ -200,45 +200,45 @@ Resources:
 #      IpProtocol: tcp
 #      FromPort: 9092
 #      ToPort: 9092
-#      SourceSecurityGroupId: !Ref PosIntegrationSecurityGroup
+#      SourceSecurityGroupId: !Ref App5-phpSecurityGroup
 #      GroupId: !Ref SecurityGroup
 #
-#  # Soldi
-#  Soldi2181IngressRule:
+#  # App6-php
+#  App6-php2181IngressRule:
 #    Type: AWS::EC2::SecurityGroupIngress
 #    Properties:
 #      IpProtocol: tcp
 #      FromPort: 2181
 #      ToPort: 2181
-#      SourceSecurityGroupId: !Ref SoldiSecurityGroup
+#      SourceSecurityGroupId: !Ref App6-phpSecurityGroup
 #      GroupId: !Ref SecurityGroup
 #
-#  Soldi9092IngressRule:
+#  App6-php9092IngressRule:
 #    Type: AWS::EC2::SecurityGroupIngress
 #    Properties:
 #      IpProtocol: tcp
 #      FromPort: 9092
 #      ToPort: 9092
-#      SourceSecurityGroupId: !Ref SoldiSecurityGroup
+#      SourceSecurityGroupId: !Ref App6-phpSecurityGroup
 #      GroupId: !Ref SecurityGroup
 #
 #  # Super Portal
-#  SuperPortal2181IngressRule:
+#  App7-php2181IngressRule:
 #    Type: AWS::EC2::SecurityGroupIngress
 #    Properties:
 #      IpProtocol: tcp
 #      FromPort: 2181
 #      ToPort: 2181
-#      SourceSecurityGroupId: !Ref SuperPortalSecurityGroup
+#      SourceSecurityGroupId: !Ref App7-phpSecurityGroup
 #      GroupId: !Ref SecurityGroup
 #
-#  SuperPortal9092IngressRule:
+#  App7-php9092IngressRule:
 #    Type: AWS::EC2::SecurityGroupIngress
 #    Properties:
 #      IpProtocol: tcp
 #      FromPort: 9092
 #      ToPort: 9092
-#      SourceSecurityGroupId: !Ref SuperPortalSecurityGroup
+#      SourceSecurityGroupId: !Ref App7-phpSecurityGroup
 #      GroupId: !Ref SecurityGroup
 #
   BastionHostIngressRule:

@@ -7,25 +7,25 @@ Parameters:
     Type: String
 
 # Source Security Group Id Parameters
-#  AmplifySecurityGroup:
+#  App1-phpSecurityGroup:
 #    Type: AWS::EC2::SecurityGroup::Id
 #
-#  DataConsumerSecurityGroup:
+#  App2-phpSecurityGroup:
 #    Type: AWS::EC2::SecurityGroup::Id
 #
-#  DataIngestionSecurityGroup:
+#  App3-javaSecurityGroup:
 #    Type: AWS::EC2::SecurityGroup::Id
 #
-#  KnoxSecurityGroup:
+#  App4-phpSecurityGroup:
 #    Type: AWS::EC2::SecurityGroup::Id
 #
-#  PosIntegrationSecurityGroup:
+#  App5-phpSecurityGroup:
 #    Type: AWS::EC2::SecurityGroup::Id
 #
-#  SoldiSecurityGroup:
+#  App6-phpSecurityGroup:
 #    Type: AWS::EC2::SecurityGroup::Id
 #
-#  SuperPortalSecurityGroup:
+#  App7-phpSecurityGroup:
 #    Type: AWS::EC2::SecurityGroup::Id
 
 # Tagging Parameters
@@ -80,40 +80,40 @@ Resources:
         Value: !Ref Component
 
 # Add rules to Security Group
-#  AmplifyIngressRule:
+#  App1-phpIngressRule:
 #    Type: AWS::EC2::SecurityGroupIngress
 #    Properties:
 #      IpProtocol: tcp
 #      FromPort: '6379'
 #      ToPort: '6379'
-#      SourceSecurityGroupId: !Ref AmplifySecurityGroup
+#      SourceSecurityGroupId: !Ref App1-phpSecurityGroup
 #      GroupId: !Ref SecurityGroup
 #
-#  DataConsumerIngressRule:
+#  App2-phpIngressRule:
 #    Type: AWS::EC2::SecurityGroupIngress
 #    Properties:
 #      IpProtocol: tcp
 #      FromPort: '6379'
 #      ToPort: '6379'
-#      SourceSecurityGroupId: !Ref DataConsumerSecurityGroup
+#      SourceSecurityGroupId: !Ref App2-phpSecurityGroup
 #      GroupId: !Ref SecurityGroup
 #
-#  DataIngestionIngressRule:
+#  App3-javaIngressRule:
 #    Type: AWS::EC2::SecurityGroupIngress
 #    Properties:
 #      IpProtocol: tcp
 #      FromPort: '6379'
 #      ToPort: '6379'
-#      SourceSecurityGroupId: !Ref DataIngestionSecurityGroup
+#      SourceSecurityGroupId: !Ref App3-javaSecurityGroup
 #      GroupId: !Ref SecurityGroup
 #
-#  KnoxIngressRule:
+#  App4-phpIngressRule:
 #    Type: AWS::EC2::SecurityGroupIngress
 #    Properties:
 #      IpProtocol: tcp
 #      FromPort: '6379'
 #      ToPort: '6379'
-#      SourceSecurityGroupId: !Ref KnoxSecurityGroup
+#      SourceSecurityGroupId: !Ref App4-phpSecurityGroup
 #      GroupId: !Ref SecurityGroup
 #
 #  PosIntergationIngressRule:
@@ -122,25 +122,25 @@ Resources:
 #      IpProtocol: tcp
 #      FromPort: '6379'
 #      ToPort: '6379'
-#      SourceSecurityGroupId: !Ref PosIntegrationSecurityGroup
+#      SourceSecurityGroupId: !Ref App5-phpSecurityGroup
 #      GroupId: !Ref SecurityGroup
 #
-#  SoldiIngressRule:
+#  App6-phpIngressRule:
 #    Type: AWS::EC2::SecurityGroupIngress
 #    Properties:
 #      IpProtocol: tcp
 #      FromPort: '6379'
 #      ToPort: '6379'
-#      SourceSecurityGroupId: !Ref SoldiSecurityGroup
+#      SourceSecurityGroupId: !Ref App6-phpSecurityGroup
 #      GroupId: !Ref SecurityGroup
 #
-#  SuperPortalIngressRule:
+#  App7-phpIngressRule:
 #    Type: AWS::EC2::SecurityGroupIngress
 #    Properties:
 #      IpProtocol: tcp
 #      FromPort: '6379'
 #      ToPort: '6379'
-#      SourceSecurityGroupId: !Ref SuperPortalSecurityGroup
+#      SourceSecurityGroupId: !Ref App7-phpSecurityGroup
 #      GroupId: !Ref SecurityGroup
 
 Outputs:

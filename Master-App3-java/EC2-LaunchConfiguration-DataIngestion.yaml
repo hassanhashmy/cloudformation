@@ -1,5 +1,5 @@
 # Template created by hash
-Description: Launch Configuration for POSIntegration EC2 Instances
+Description: Launch Configuration for App3-java EC2 Instances
 
 Parameters:
 
@@ -82,7 +82,7 @@ Parameters:
     Type: String
     MinLength: '3'
     MaxLength: '255'
-    Default: POSIntegration
+    Default: App3-java
 
 Conditions:
   HasEC2KeyPair: !Not [!Equals ['', !Ref EC2KeyPair]]
@@ -114,7 +114,7 @@ Resources:
             systemctl start httpd
             systemctl enable php-fpm
             systemctl start php-fpm
-            mkdir -p /var/www/SomePlatform-project/posintegration
+            mkdir -p /var/www/SomePlatform-project/App3-java
             chown -R apache:apache /var/www/SomePlatform-project
             iptables -A INPUT -p tcp --dport 80 -m state --state NEW -j ACCEPT
             iptables -A INPUT -p tcp --dport 443 -m state --state NEW -j ACCEPT

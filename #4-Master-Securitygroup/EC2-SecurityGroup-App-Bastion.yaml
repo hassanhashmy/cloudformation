@@ -14,25 +14,25 @@ Parameters:
   KafkaSecurityGroup:
     Type: AWS::EC2::SecurityGroup::Id
 
-  AmplifySecurityGroup:
+  App1-phpSecurityGroup:
     Type: AWS::EC2::SecurityGroup::Id
 
-  DataConsumerSecurityGroup:
+  App2-phpSecurityGroup:
     Type: AWS::EC2::SecurityGroup::Id
 
-  DataIngestionSecurityGroup:
+  App3-javaSecurityGroup:
     Type: AWS::EC2::SecurityGroup::Id
 
-  KNOXSecurityGroup:
+  App4-phpSecurityGroup:
     Type: AWS::EC2::SecurityGroup::Id
 
-  POSIntegrationSecurityGroup:
+  App5-phpSecurityGroup:
     Type: AWS::EC2::SecurityGroup::Id
 
-  SoldiSecurityGroup:
+  App6-phpSecurityGroup:
     Type: AWS::EC2::SecurityGroup::Id
 
-  SuperPortalSecurityGroup:
+  App7-phpSecurityGroup:
     Type: AWS::EC2::SecurityGroup::Id
 
   SomeOffice1:
@@ -183,68 +183,68 @@ Resources:
       SourceSecurityGroupId: !Ref SecurityGroup
       GroupId: !Ref KafkaSecurityGroup
 
-  AmplifySSHIngressRule:
+  App1-phpSSHIngressRule:
     Type: AWS::EC2::SecurityGroupIngress
     Properties:
       IpProtocol: tcp
       FromPort: 22
       ToPort: 22
       SourceSecurityGroupId: !Ref SecurityGroup
-      GroupId: !Ref AmplifySecurityGroup
+      GroupId: !Ref App1-phpSecurityGroup
 
-#  DataConsumerSSHIngressRule:
+#  App2-phpSSHIngressRule:
 #    Type: AWS::EC2::SecurityGroupIngress
 #    Properties:
 #      IpProtocol: tcp
 #      FromPort: 22
 #      ToPort: 22
 #      SourceSecurityGroupId: !Ref SecurityGroup
-#      GroupId: !Ref DataConsumerSecurityGroup
+#      GroupId: !Ref App2-phpSecurityGroup
 #
-#  DataIngestionSSHIngressRule:
+#  App3-javaSSHIngressRule:
 #    Type: AWS::EC2::SecurityGroupIngress
 #    Properties:
 #      IpProtocol: tcp
 #      FromPort: 22
 #      ToPort: 22
 #      SourceSecurityGroupId: !Ref SecurityGroup
-#      GroupId: !Ref DataIngestionSecurityGroup
+#      GroupId: !Ref App3-javaSecurityGroup
 #
-#  KNOXSSHIngressRule:
+#  App4-phpSSHIngressRule:
 #    Type: AWS::EC2::SecurityGroupIngress
 #    Properties:
 #      IpProtocol: tcp
 #      FromPort: 22
 #      ToPort: 22
 #      SourceSecurityGroupId: !Ref SecurityGroup
-#      GroupId: !Ref KNOXSecurityGroup
+#      GroupId: !Ref App4-phpSecurityGroup
 #
-#  POSIntegrationSSHIngressRule:
+#  App5-phpSSHIngressRule:
 #    Type: AWS::EC2::SecurityGroupIngress
 #    Properties:
 #      IpProtocol: tcp
 #      FromPort: 22
 #      ToPort: 22
 #      SourceSecurityGroupId: !Ref SecurityGroup
-#      GroupId: !Ref POSIntegrationSecurityGroup
+#      GroupId: !Ref App5-phpSecurityGroup
 #
-#  SoldiSSHIngressRule:
+#  App6-phpSSHIngressRule:
 #    Type: AWS::EC2::SecurityGroupIngress
 #    Properties:
 #      IpProtocol: tcp
 #      FromPort: 22
 #      ToPort: 22
 #      SourceSecurityGroupId: !Ref SecurityGroup
-#      GroupId: !Ref SoldiSecurityGroup
+#      GroupId: !Ref App6-phpSecurityGroup
 #
-#  SuperPortalSSHIngressRule:
+#  App7-phpSSHIngressRule:
 #    Type: AWS::EC2::SecurityGroupIngress
 #    Properties:
 #      IpProtocol: tcp
 #      FromPort: 22
 #      ToPort: 22
 #      SourceSecurityGroupId: !Ref SecurityGroup
-#      GroupId: !Ref SuperPortalSecurityGroup
+#      GroupId: !Ref App7-phpSecurityGroup
 
 Outputs:
   SecurityGroup:

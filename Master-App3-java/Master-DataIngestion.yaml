@@ -1,5 +1,5 @@
 # Template created by hash
-Description: DataIngestion Application Stack (incl. Classic Load Balancer, Security Groups, Auto Scaling Group and Launch Configuration)
+Description: App3-java Application Stack (incl. Classic Load Balancer, Security Groups, Auto Scaling Group and Launch Configuration)
 
 # This Master Template creates the following resources:
 #   Load Balancer Security Group
@@ -55,11 +55,11 @@ Parameters:
 
   SecurityGroupTemplateFile:
     Type: String
-    Default: EC2-SecurityGroup-App-DataIngestion.yaml
+    Default: EC2-SecurityGroup-App-App3-java.yaml
 
   IAMRoleTemplateFile:
     Type: String
-    Default: IAM-Role-DataIngestion.yaml
+    Default: IAM-Role-App3-java.yaml
 
   EC2InstanceTemplateFile:
     Description: Provide to build 3 standalone EC2 instances for this application
@@ -69,7 +69,7 @@ Parameters:
   LaunchConfigurationTemplateFile:
     Description: Provide to build an Auto-Scaling Group for this application
     Type: String
-    Default: EC2-LaunchConfiguration-DataIngestion.yaml
+    Default: EC2-LaunchConfiguration-App3-java.yaml
 
   AutoScalingTemplateFile:
     Description: Provide to build an Auto-Scaling Group for this application
@@ -405,7 +405,7 @@ Parameters:
     Type: String
     MinLength: '3'
     MaxLength: '255'
-    Default: DataIngestion
+    Default: App3-java
 
 Metadata:
   AWS::CloudFormation::Interface:
@@ -537,7 +537,7 @@ Resources:
         HassanPakistan1: XX2.X76.X3X.XX8/32
         HassanPakistan2: XX2.X76.X7X.XX1/32
 
-  # DataIngestion Classic ELB
+  # App3-java Classic ELB
   ElasticLoadBalancer:
     Type: AWS::CloudFormation::Stack
     Properties:
@@ -593,7 +593,7 @@ Resources:
         S3BucketPrefix: !Ref Component
         LogBucketName: !Ref LogBucketName
 
-  # DataIngestion EC2 Instances Security Group
+  # App3-java EC2 Instances Security Group
   SecurityGroup:
     Type: AWS::CloudFormation::Stack
     Properties:
@@ -614,7 +614,7 @@ Resources:
         KafkaSecurityGroup:
           Fn::ImportValue: !Sub ${KafkaStackName}-SecurityGroup
 
-  #DataIngestion IAM Role
+  #App3-java IAM Role
   IAMRole:
     Type: AWS::CloudFormation::Stack
     Properties:
@@ -686,7 +686,7 @@ Resources:
         SubnetId:
           Fn::ImportValue: !Sub ${VPCStackName}-PrivateSubnetC
 
-  #DataIngestion Application Launch Configuration
+  #App3-java Application Launch Configuration
   LaunchConfiguration:
     Type: AWS::CloudFormation::Stack
     Condition: IsASG
@@ -704,7 +704,7 @@ Resources:
         EC2KeyPair: !Ref EC2KeyPair
         InstanceType: !Ref InstanceType
 
-  #DataIngestion Application AutoScaling Group
+  #App3-java Application AutoScaling Group
   AutoScalingGroup:
     Type: AWS::CloudFormation::Stack
     Condition: IsASG
@@ -779,25 +779,25 @@ Resources:
 
 Outputs:
   SecurityGroup:
-    Description: The DataIngestion Security Group
+    Description: The App3-java Security Group
     Value:  !GetAtt [ SecurityGroup, Outputs.SecurityGroup ]
     Export:
       Name: !Sub "${AWS::StackName}-SecurityGroup"
 
   ELBDNSName:
-    Description: DataIngestion ELB DNS Name
+    Description: App3-java ELB DNS Name
     Value: !GetAtt [ ElasticLoadBalancer, Outputs.ELBDNSName ]
     Export:
       Name: !Sub "${AWS::StackName}-ELBDNSName"
 
   CloudFrontDistribution:
-    Description: DataIngestion CloudFront Distribution
+    Description: App3-java CloudFront Distribution
     Value: !GetAtt [ Distribution, Outputs.Distribution ]
     Export:
       Name: !Sub "${AWS::StackName}-CloudFrontDistribution"
 
   CloudFrontDNSName:
-    Description: DataIngestion CloudFront DNS
+    Description: App3-java CloudFront DNS
     Value: !GetAtt [ Distribution, Outputs.CloudFrontDNSName ]
     Export:
       Name: !Sub "${AWS::StackName}-CloudFrontDNSName"

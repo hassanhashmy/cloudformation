@@ -1,5 +1,5 @@
 # Template created by hash
-Description: Launch Configuration for Amplify EC2 Instances
+Description: Launch Configuration for App4-php EC2 Instances
 
 Parameters:
 
@@ -52,6 +52,7 @@ Parameters:
     Type: String
     AllowedValues:
       - Production
+      - NonProduction
       - UAT
       - Test
 
@@ -69,16 +70,19 @@ Parameters:
     Type: String
     MinLength: '3'
     MaxLength: '255'
+    Default: BrandName
 
   Application:
     Type: String
     MinLength: '3'
     MaxLength: '255'
+    Default: SomePlatform
 
   Component:
     Type: String
     MinLength: '3'
     MaxLength: '255'
+    Default: App4-php
 
 Conditions:
   HasEC2KeyPair: !Not [!Equals ['', !Ref EC2KeyPair]]
@@ -101,13 +105,16 @@ Resources:
             #!/bin/bash
             rpm -Uvh https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
             rpm -Uvh https://mirror.webtatic.com/yum/el7/webtatic-release.rpm
-            yum install --enablerepo=epel httpd php70w php70w-cli php70w-fpm mod_php70w -y
+            yum install httpd php70* -y --skip-broken
+            yum remove -y php70w-mysqlnd
+            yum install -y php70w-mysql
+            curl -sS https://getcomposer.org/installer | HOME=/root php -- --install-dir=/bin
+            mv /bin/composer.phar /bin/composer
             systemctl enable httpd
             systemctl start httpd
             systemctl enable php-fpm
             systemctl start php-fpm
-            component=\$\{${Component},,\}
-            mkdir -p /var/www/SomePlatform-project/$component
+            mkdir -p /var/www/SomePlatform-project/App4-php
             chown -R apache:apache /var/www/SomePlatform-project
             iptables -A INPUT -p tcp --dport 80 -m state --state NEW -j ACCEPT
             iptables -A INPUT -p tcp --dport 443 -m state --state NEW -j ACCEPT
@@ -119,7 +126,6 @@ Resources:
             ?>
             EOF
             chown apache:apache /var/www/html/phpinfo.php
-            # Install CodeDeploy agent - currently not used for deployment as of Oct 2017
             yum install ruby -y
             yum install wget -y
             cd /home/ec2-user
@@ -127,13 +133,6 @@ Resources:
             chmod +x ./install
             ./install auto
             systemctl start codedeploy-agent
-
-            # Download code from S3 and deploy
-            aws s3 cp s3://DCHash2-nonprod-applications/$component-latest.tgz /var/www/SomePlatform-project/
-            sleep 60
-            tar -vxzf /var/www/SomePlatform-project/$component-latest.tgz -C /var/www/SomePlatform-project/
-            chown -R apache:apache /var/www/SomePlatform-project
-            systemctl restart httpd
 
             #Notify AutoScaling Group of installation complete
             REGION=`echo ap-southeast-2`
@@ -144,7 +143,6 @@ Resources:
             LCHOOKNAME=`aws autoscaling describe-lifecycle-hooks --auto-scaling-group-name $ASGNAME --region $REGION --query 'LifecycleHooks[*].LifecycleHookName' | tr -d '[]"'`
             echo $LCHOOKNAME
             aws autoscaling complete-lifecycle-action --instance-id $INSTANCEID --lifecycle-hook-name $LCHOOKNAME --auto-scaling-group-name $ASGNAME --region $REGION --lifecycle-action-result CONTINUE
-
 Outputs:
   LaunchConfiguration:
     Description: The identifier of the Launch Configuration

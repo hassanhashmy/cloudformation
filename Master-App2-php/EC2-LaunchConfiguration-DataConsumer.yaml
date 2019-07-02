@@ -1,18 +1,19 @@
 # Template created by hash
-Description: Creates a standalone EC2 instance with the basic requirements for Connect 2 applications
+Description: Launch Configuration for App2-php EC2 Instances
+
 Parameters:
 
-
+  #Launch Configuration Specific Parameters
   ImageId:
-    Description: AMI Id of the latest Some RHEL image
-    Type: String
+    Type: AWS::EC2::Image::Id
 
   InstanceProfile:
-    Description: ARN of the Instance Profile
     Type: String
 
+  # Note:
+  # Only includes current generation General Purpose, Memory and Compute Optimised instance types that allow for EBS Encryption.
+  # Instance  classes such as CR1, X1, F1, G2/3, and P2 have been removed.
   InstanceType:
-    Description: The EC2 instance type to launch
     Type: String
     AllowedValues:
     - c4.2xlarge
@@ -40,39 +41,23 @@ Parameters:
     - t2.small
     - t2.xlarge
 
-  KeyName:
-    Type: String
-
-  SecurityGroup:
+  ApplicationSecurityGroup:
     Type: AWS::EC2::SecurityGroup::Id
 
-  SubnetId:
-    Type: AWS::EC2::Subnet::Id
-
-  AppBucket:
+  EC2KeyPair:
     Type: String
-
-  AvailabilityZone:
-    Type: String
-    AllowedValues:
-      - A
-      - B
-      - C
 
   # Tagging Parameters
   Environment:
-    Description: Production or UAT or Test
     Type: String
-    Default: UAT
     AllowedValues:
       - Production
+      - NonProduction
       - UAT
       - Test
 
   BusinessUnit:
-    Description: Some Group Business Unit
     Type: String
-    Default: Gaming
     AllowedValues:
       - Charitable
       - Corporate
@@ -82,62 +67,54 @@ Parameters:
     ConstraintDescription: Must be Charitable | Corporate | Gaming | Lotteries | Wagering
 
   Department:
-    Description: Department
     Type: String
     MinLength: '3'
     MaxLength: '255'
     Default: BrandName
 
   Application:
-    Description: Application
     Type: String
     MinLength: '3'
     MaxLength: '255'
     Default: SomePlatform
 
   Component:
-    Description: Specific Application
     Type: String
     MinLength: '3'
     MaxLength: '255'
-    Default: SuperPortal
+    Default: App2-php
+
+Conditions:
+  HasEC2KeyPair: !Not [!Equals ['', !Ref EC2KeyPair]]
 
 Resources:
-  Instance:
-    Type: AWS::EC2::Instance
+
+  LaunchConfiguration:
+    Type: AWS::AutoScaling::LaunchConfiguration
     Properties:
-      ImageId: !Ref ImageId
-      IamInstanceProfile: !Ref InstanceProfile
-      InstanceType: !Ref InstanceType
-      KeyName: !Ref KeyName
-      SecurityGroupIds:
-      - !Ref SecurityGroup
-      SubnetId: !Ref SubnetId
-      Tags:
-      - Key: Name
-        Value:  !Sub ${Environment}-${Component}-${AvailabilityZone}-App
-      - Key: Environment
-        Value: !Ref Environment
-      - Key: BusinessUnit
-        Value: !Ref BusinessUnit
-      - Key: Application
-        Value: !Ref Application
-      - Key: Component
-        Value: !Ref Component
-      UserData:
-        # Taken from Hassan "deployment script"
-        'Fn::Base64': !Sub |
+        IamInstanceProfile: !Ref InstanceProfile
+        ImageId: !Ref ImageId
+        InstanceMonitoring: True
+        InstanceType: !Ref InstanceType
+        SecurityGroups:
+          - !Ref ApplicationSecurityGroup
+        KeyName: !If [HasEC2KeyPair, !Ref EC2KeyPair, !Ref "AWS::NoValue"]
+        UserData:
+        #Note !Sub is required to preserve line breaks of User Data
+          'Fn::Base64': !Sub |
             #!/bin/bash
             rpm -Uvh https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
             rpm -Uvh https://mirror.webtatic.com/yum/el7/webtatic-release.rpm
-            yum install --enablerepo=epel httpd php70w php70w-cli php70w-fpm mod_php70w -y
+            yum install httpd php70* -y --skip-broken
+            yum remove -y php70w-mysqlnd
+            yum install -y php70w-mysql
+            curl -sS https://getcomposer.org/installer | HOME=/root php -- --install-dir=/bin
+            mv /bin/composer.phar /bin/composer
             systemctl enable httpd
             systemctl start httpd
             systemctl enable php-fpm
             systemctl start php-fpm
-            string=${Component}
-            component=${!string,,}
-            mkdir -p /var/www/SomePlatform-project/$component
+            mkdir -p /var/www/SomePlatform-project/App2-php
             chown -R apache:apache /var/www/SomePlatform-project
             iptables -A INPUT -p tcp --dport 80 -m state --state NEW -j ACCEPT
             iptables -A INPUT -p tcp --dport 443 -m state --state NEW -j ACCEPT
@@ -149,7 +126,6 @@ Resources:
             ?>
             EOF
             chown apache:apache /var/www/html/phpinfo.php
-            # Install CodeDeploy agent - currently not used for deployment as of Oct 2017
             yum install ruby -y
             yum install wget -y
             cd /home/ec2-user
@@ -158,16 +134,16 @@ Resources:
             ./install auto
             systemctl start codedeploy-agent
 
-            # Download code from S3 and deploy
-            aws s3 cp s3://${AppBucket}/$component-latest.tgz /var/www/SomePlatform-project/
-            sleep 60
-            tar -vxzf /var/www/SomePlatform-project/$component-latest.tgz -C /var/www/SomePlatform-project/
-            chown -R apache:apache /var/www/SomePlatform-project
-            systemctl restart httpd
-
+            #Notify AutoScaling Group of installation complete
+            REGION=`echo ap-southeast-2`
+            INSTANCEID=`curl http://169.254.169.254/latest/meta-data/instance-id`
+            echo $INSTANCEID
+            ASGNAME=`aws autoscaling describe-auto-scaling-instances --region $REGION --instance-ids $INSTANCEID --query 'AutoScalingInstances[*].AutoScalingGroupName' | tr -d '[]"'`
+            echo $ASGNAME
+            LCHOOKNAME=`aws autoscaling describe-lifecycle-hooks --auto-scaling-group-name $ASGNAME --region $REGION --query 'LifecycleHooks[*].LifecycleHookName' | tr -d '[]"'`
+            echo $LCHOOKNAME
+            aws autoscaling complete-lifecycle-action --instance-id $INSTANCEID --lifecycle-hook-name $LCHOOKNAME --auto-scaling-group-name $ASGNAME --region $REGION --lifecycle-action-result CONTINUE
 Outputs:
-  Instance:
-    Description: Instance ID
-    Value: !Ref Instance
-    Export:
-      Name: !Sub ${AWS::StackName}-Instance
+  LaunchConfiguration:
+    Description: The identifier of the Launch Configuration
+    Value: !Ref LaunchConfiguration

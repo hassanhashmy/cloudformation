@@ -161,7 +161,7 @@ Resources:
             # Download code from S3 and deploy
             aws s3 cp s3://${AppBucket}/$component-latest.tgz /var/www/SomePlatform-project/
             sleep 60
-            tar -vxzf /var/www/SomePlatform-project/amplify-latest.tgz -C /var/www/SomePlatform-project/
+            tar -vxzf /var/www/SomePlatform-project/App1-php-latest.tgz -C /var/www/SomePlatform-project/
             chown -R apache:apache /var/www/SomePlatform-project
             systemctl restart httpd
 

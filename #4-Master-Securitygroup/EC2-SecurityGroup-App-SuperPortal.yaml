@@ -1,5 +1,5 @@
 # Template created by hash
-Description: Security Group for SuperPortal EC2 Instances
+Description: Security Group for App7-php EC2 Instances
 
 Parameters:
 
@@ -8,7 +8,7 @@ Parameters:
     Type: AWS::EC2::VPC::Id
 
   ELBSecurityGroup:
-    Description: The ELB Security Group for the SuperPortal ELB
+    Description: The ELB Security Group for the App7-php ELB
     Type: AWS::EC2::SecurityGroup::Id
 
   ElastiCacheSecurityGroup:
@@ -52,7 +52,7 @@ Parameters:
     Type: String
     MinLength: '3'
     MaxLength: '255'
-    Default: SuperPortal
+    Default: App7-php
 
 Resources:
 
@@ -154,5 +154,5 @@ Resources:
 
 Outputs:
   SecurityGroup:
-    Description: The App SuperPortal Security Group
+    Description: The App App7-php Security Group
     Value:  !Ref SecurityGroup

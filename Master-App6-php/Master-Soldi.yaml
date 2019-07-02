@@ -1,5 +1,5 @@
 # Template created by hash
-Description: Amplify Application Stack (incl. Classic Load Balancer, Security Groups, Auto Scaling Group and Launch Configuration)
+Description: App6-php Application Stack (incl. Classic Load Balancer, Security Groups, Auto Scaling Group and Launch Configuration)
 
 # This Master Template creates the following resources:
 #   Load Balancer Security Group
@@ -55,21 +55,21 @@ Parameters:
 
   SecurityGroupTemplateFile:
     Type: String
-    Default: EC2-SecurityGroup-App-Amplify.yaml
+    Default: EC2-SecurityGroup-App-App6-php.yaml
 
   IAMRoleTemplateFile:
     Type: String
-    Default: IAM-Role-Amplify.yaml
+    Default: IAM-Role-App6-php.yaml
 
   EC2InstanceTemplateFile:
     Description: Provide to build 3 standalone EC2 instances for this application
     Type: String
-    Default: EC2-Standalone-Amplify.yaml
+    Default: EC2-Standalone-DCHash2.yaml
 
   LaunchConfigurationTemplateFile:
     Description: Provide to build an Auto-Scaling Group for this application
     Type: String
-    Default: EC2-LaunchConfiguration-Amplify.yaml
+    Default: EC2-LaunchConfiguration-App6-php.yaml
 
   AutoScalingTemplateFile:
     Description: Provide to build an Auto-Scaling Group for this application
@@ -95,7 +95,7 @@ Parameters:
   # Classic Load Balancer Parameters
 
   HostName:
-    Default: uatam
+    Default: uatso
     Type: String
     Description: Record Name for the new Resource Record in the Hosted Zone for the ELB or CloudFront distribution
 
@@ -104,7 +104,6 @@ Parameters:
     MinValue: '0'
     Type: Number
     Description: Set the timeout value for Elastic Load Balancer draining policy if required
-    MinValue: '0'
     MaxValue: '3600'
 
   InstancePort:
@@ -171,7 +170,7 @@ Parameters:
     Description: Consecutive successful checks before marking instance healthy.
 
   SSLCertArn:
-    Default: 'arn:aws:acm:ap-southeast-2:XXXXXXXXXXXX:certificate/XXXXXXXX-2142-45f7-948a-296c5f176bc9'
+    Default: 'arn:aws:acm:ap-southeast-2:XXXXXXXXXXXX:certificate/XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX'
     ConstraintDescription: Must be an existing SSL Name.
     Type: String
     Description: SSL Certificate Name. Full ARN required.
@@ -257,17 +256,12 @@ Parameters:
   ImageId:
     Description: The Amazon Machine Image Id
     Type: String
-    Default: ami-XXXXXXXXX # SomeDCHash2BaseImage
+    Default: ami-XXXXXXXX # SomeDCHash2BaseImage
 
   EC2KeyPair:
     Description: The EC2 Keypair to associated to the EC2 Instances (Leave blank for no key pair)
     Type: String # Note have to use an untyped parameter as AWS::EC2::KeyPair::KeyName is not optional
     Default: DCHash2-TestKey
-
-  AppBucket:
-    Description: The S3 bucket containing the application package
-    Type: String
-    Default: DCHash2-nonprod-applications
 
   # Note:
   # Only includes current generation General Purpose, Memory and Compute Optimised instance types that allow for EBS Encryption.
@@ -410,7 +404,7 @@ Parameters:
     Type: String
     MinLength: '3'
     MaxLength: '255'
-    Default: Amplify
+    Default: App6-php
 
 Metadata:
   AWS::CloudFormation::Interface:
@@ -455,7 +449,6 @@ Metadata:
       - ImageId
       - EC2KeyPair
       - InstanceType
-      - AppBucket
     - Label:
         default: Load Balancer General Configuration
       Parameters:
@@ -543,7 +536,7 @@ Resources:
         HassanPakistan1: XX2.X76.X3X.XX8/32
         HassanPakistan2: XX2.X76.X7X.XX1/32
 
-  # Amplify Classic ELB
+  # App6-php Classic ELB
   ElasticLoadBalancer:
     Type: AWS::CloudFormation::Stack
     Properties:
@@ -590,8 +583,8 @@ Resources:
             Fn::Join:
             - ","
             - - !GetAtt [ EC2InstanceA, Outputs.Instance ]
-#              - !GetAtt [ EC2InstanceB, Outputs.Instance ]
-#              - !GetAtt [ EC2InstanceC, Outputs.Instance ]
+              - !GetAtt [ EC2InstanceB, Outputs.Instance ]
+              - !GetAtt [ EC2InstanceC, Outputs.Instance ]
           -
             ''
         ASGTargets: !Ref ASGTargets
@@ -599,7 +592,7 @@ Resources:
         S3BucketPrefix: !Ref Component
         LogBucketName: !Ref LogBucketName
 
-  # Amplify EC2 Instances Security Group
+  # App6-php EC2 Instances Security Group
   SecurityGroup:
     Type: AWS::CloudFormation::Stack
     Properties:
@@ -620,7 +613,7 @@ Resources:
         KafkaSecurityGroup:
           Fn::ImportValue: !Sub ${KafkaStackName}-SecurityGroup
 
-  #Amplify IAM Role
+  #App6-php IAM Role
   IAMRole:
     Type: AWS::CloudFormation::Stack
     Properties:
@@ -645,7 +638,7 @@ Resources:
         BusinessUnit: !Ref BusinessUnit
         Department: !Ref Department
         Application: !Ref Application
-        Component: !Ref Component
+        Component: !Sub ${Component}-A
         ImageId: !Ref ImageId
         InstanceProfile: !GetAtt [ IAMRole, Outputs.InstanceProfileName ]
         InstanceType: !Ref InstanceType
@@ -653,48 +646,46 @@ Resources:
         SecurityGroup: !GetAtt [ SecurityGroup, Outputs.SecurityGroup ]
         SubnetId:
           Fn::ImportValue: !Sub ${VPCStackName}-PrivateSubnetA
-        AppBucket: !Ref AppBucket
-        AvailabilityZone: A
 
-#  EC2InstanceB:
-#    Type: AWS::CloudFormation::Stack
-#    Condition: IsNotASG
-#    Properties:
-#      TemplateURL: !Sub https://s3-ap-southeast-2.amazonaws.com/${BuildBucket}/${EC2InstanceTemplateFile}
-#      Parameters:
-#        Environment: !Ref Environment
-#        BusinessUnit: !Ref BusinessUnit
-#        Department: !Ref Department
-#        Application: !Ref Application
-#        Component: !Sub ${Component}-B
-#        ImageId: !Ref ImageId
-#        InstanceProfile: !GetAtt [ IAMRole, Outputs.InstanceProfileName ]
-#        InstanceType: !Ref InstanceType
-#        KeyName: !Ref EC2KeyPair
-#        SecurityGroup: !GetAtt [ SecurityGroup, Outputs.SecurityGroup ]
-#        SubnetId:
-#          Fn::ImportValue: !Sub ${VPCStackName}-PrivateSubnetB
-#
-#  EC2InstanceC:
-#    Type: AWS::CloudFormation::Stack
-#    Condition: IsNotASG
-#    Properties:
-#      TemplateURL: !Sub https://s3-ap-southeast-2.amazonaws.com/${BuildBucket}/${EC2InstanceTemplateFile}
-#      Parameters:
-#        Environment: !Ref Environment
-#        BusinessUnit: !Ref BusinessUnit
-#        Department: !Ref Department
-#        Application: !Ref Application
-#        Component: !Sub ${Component}-C
-#        ImageId: !Ref ImageId
-#        InstanceProfile: !GetAtt [ IAMRole, Outputs.InstanceProfileName ]
-#        InstanceType: !Ref InstanceType
-#        KeyName: !Ref EC2KeyPair
-#        SecurityGroup: !GetAtt [ SecurityGroup, Outputs.SecurityGroup ]
-#        SubnetId:
-#          Fn::ImportValue: !Sub ${VPCStackName}-PrivateSubnetC
+  EC2InstanceB:
+    Type: AWS::CloudFormation::Stack
+    Condition: IsNotASG
+    Properties:
+      TemplateURL: !Sub https://s3-ap-southeast-2.amazonaws.com/${BuildBucket}/${EC2InstanceTemplateFile}
+      Parameters:
+        Environment: !Ref Environment
+        BusinessUnit: !Ref BusinessUnit
+        Department: !Ref Department
+        Application: !Ref Application
+        Component: !Sub ${Component}-B
+        ImageId: !Ref ImageId
+        InstanceProfile: !GetAtt [ IAMRole, Outputs.InstanceProfileName ]
+        InstanceType: !Ref InstanceType
+        KeyName: !Ref EC2KeyPair
+        SecurityGroup: !GetAtt [ SecurityGroup, Outputs.SecurityGroup ]
+        SubnetId:
+          Fn::ImportValue: !Sub ${VPCStackName}-PrivateSubnetB
 
-  #Amplify Application Launch Configuration
+  EC2InstanceC:
+    Type: AWS::CloudFormation::Stack
+    Condition: IsNotASG
+    Properties:
+      TemplateURL: !Sub https://s3-ap-southeast-2.amazonaws.com/${BuildBucket}/${EC2InstanceTemplateFile}
+      Parameters:
+        Environment: !Ref Environment
+        BusinessUnit: !Ref BusinessUnit
+        Department: !Ref Department
+        Application: !Ref Application
+        Component: !Sub ${Component}-C
+        ImageId: !Ref ImageId
+        InstanceProfile: !GetAtt [ IAMRole, Outputs.InstanceProfileName ]
+        InstanceType: !Ref InstanceType
+        KeyName: !Ref EC2KeyPair
+        SecurityGroup: !GetAtt [ SecurityGroup, Outputs.SecurityGroup ]
+        SubnetId:
+          Fn::ImportValue: !Sub ${VPCStackName}-PrivateSubnetC
+
+  #App6-php Application Launch Configuration
   LaunchConfiguration:
     Type: AWS::CloudFormation::Stack
     Condition: IsASG
@@ -712,7 +703,7 @@ Resources:
         EC2KeyPair: !Ref EC2KeyPair
         InstanceType: !Ref InstanceType
 
-  #Amplify Application AutoScaling Group
+  #App6-php Application AutoScaling Group
   AutoScalingGroup:
     Type: AWS::CloudFormation::Stack
     Condition: IsASG
@@ -787,25 +778,25 @@ Resources:
 
 Outputs:
   SecurityGroup:
-    Description: The Amplify Security Group
+    Description: The App6-php Security Group
     Value:  !GetAtt [ SecurityGroup, Outputs.SecurityGroup ]
     Export:
       Name: !Sub "${AWS::StackName}-SecurityGroup"
 
   ELBDNSName:
-    Description: Amplify ELB DNS Name
+    Description: App6-php ELB DNS Name
     Value: !GetAtt [ ElasticLoadBalancer, Outputs.ELBDNSName ]
     Export:
       Name: !Sub "${AWS::StackName}-ELBDNSName"
 
   CloudFrontDistribution:
-    Description: Amplify CloudFront Distribution
+    Description: App6-php CloudFront Distribution
     Value: !GetAtt [ Distribution, Outputs.Distribution ]
     Export:
       Name: !Sub "${AWS::StackName}-CloudFrontDistribution"
 
   CloudFrontDNSName:
-    Description: Amplify CloudFront DNS
+    Description: App6-php CloudFront DNS
     Value: !GetAtt [ Distribution, Outputs.CloudFrontDNSName ]
     Export:
       Name: !Sub "${AWS::StackName}-CloudFrontDNSName"
