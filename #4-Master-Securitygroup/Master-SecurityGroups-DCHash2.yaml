@@ -11,18 +11,18 @@ Parameters:
     Type: String
     Description: Filename of the Application App4-php SG template including file extension
     Default: EC2-SecurityGroup-App-App4-php.yaml
-  AppWatchTowerFile:
+#  AppApp9File:
+#    Type: String
+#    Description: Filename of the Application App9-phpSG template including file extension
+#    Default: EC2-SecurityGroup-App-App9-php.yaml
+  AppApp1-phpFile:
     Type: String
-    Description: Filename of the Application WatchTowerSG template including file extension
-    Default: EC2-SecurityGroup-App-WatchTower.yaml
-  AppAmpliFiFile:
-    Type: String
-    Description: Filename of the Application AmpliFi SG template including file extension
-    Default: EC2-SecurityGroup-App-AmpliFi.yaml
-  AppApp4-phpFile:
-    Type: String
-    Description: Filename of the Application App4-php SG template including file extension
-    Default: EC2-SecurityGroup-App-App4-php.yaml
+    Description: Filename of the Application App1-php SG template including file extension
+    Default: EC2-SecurityGroup-App-App1-php.yaml
+#  AppApp2-phpFile:
+#    Type: String
+#    Description: Filename of the Application App4-php SG template including file extension
+#    Default: EC2-SecurityGroup-App-App10-php.yaml
   AppApp3-javaFile:
     Type: String
     Description: Filename of the Application Data Ingestion SG template including file extension
@@ -107,13 +107,13 @@ Metadata:
         default: CloudFormation Template Files and Location
       Parameters:
       - LoadBalancerFile
-      - AppAmpliFiFile
+      - AppApp1-phpFile
       - AppApp3-javaFile
       - AppApp4-phpFile
       - AppApp5-phpFile
       - AppApp6-phpFile
       - AppApp7-phpFile
-      - AppWatchTowerFile
+#      - AppApp9-phpFile
       - AppKafkaFile
       - AppRabbitMqFile
       - ElastiCacheRedisFile
@@ -134,7 +134,7 @@ Metadata:
 Resources:
 
   # Internet Elastic Load Balancer Security Groups. These all use the same template
-  ELBAmpliFiSG:
+  ELBApp1-phpSG:
     Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL: !Sub https://s3-${AWS::Region}.amazonaws.com/${BuildBucket}/${LoadBalancerFile}
@@ -145,7 +145,7 @@ Resources:
         Application: !Ref Application
         VPCId:
           Fn::ImportValue: !Sub ${VPCStackName}-VPCID
-        Component: AmpliFi
+        Component: App1-php
 
   ELBApp3-javaSG:
     Type: AWS::CloudFormation::Stack
@@ -212,26 +212,26 @@ Resources:
           Fn::ImportValue: !Sub ${VPCStackName}-VPCID
         Component: App7-php
 
-  ELBWatchTowerSG:
-    Type: AWS::CloudFormation::Stack
-    Properties:
-      TemplateURL: !Sub https://s3-${AWS::Region}.amazonaws.com/${BuildBucket}/${LoadBalancerFile}
-      Parameters:
-        Environment: !Ref Environment
-        BusinessUnit: !Ref BusinessUnit
-        Department: !Ref Department
-        Application: !Ref Application
-        VPCId:
-          Fn::ImportValue: !Sub ${VPCStackName}-VPCID
-        Component: WatchTower
+  #ELBApp9-phpSG:
+  #  Type: AWS::CloudFormation::Stack
+  #  Properties:
+  #    TemplateURL: !Sub https://s3-${AWS::Region}.amazonaws.com/${BuildBucket}/${LoadBalancerFile}
+  #    Parameters:
+  #      Environment: !Ref Environment
+  #      BusinessUnit: !Ref BusinessUnit
+  #      Department: !Ref Department
+  #      Application: !Ref Application
+  #      VPCId:
+  #        Fn::ImportValue: !Sub ${VPCStackName}-VPCID
+  #      Component: App9-php
 
   # Application Security Groups
 
-  AppAmpliFiSG:
+  AppApp1-phpSG:
     Type: AWS::CloudFormation::Stack
-    DependsOn: ELBAmpliFiSG
+    DependsOn: ELBApp1-phpSG
     Properties:
-      TemplateURL: !Sub https://s3-${AWS::Region}.amazonaws.com/${BuildBucket}/${AppAmpliFiFile}
+      TemplateURL: !Sub https://s3-${AWS::Region}.amazonaws.com/${BuildBucket}/${AppApp1-phpFile}
       Parameters:
         Environment: !Ref Environment
         BusinessUnit: !Ref BusinessUnit
@@ -239,8 +239,8 @@ Resources:
         Application: !Ref Application
         VPCId:
           Fn::ImportValue: !Sub ${VPCStackName}-VPCID
-        Component: AmpliFi
-        ELBSecurityGroup: !GetAtt [ "ELBAmpliFiSG", "Outputs.SecurityGroup" ]
+        Component: App1-php
+        ELBSecurityGroup: !GetAtt [ "ELBApp1-phpSG", "Outputs.SecurityGroup" ]
 
   AppApp3-javaSG:
     Type: AWS::CloudFormation::Stack
@@ -302,30 +302,30 @@ Resources:
         Component: App7-php
         ELBSecurityGroup: !GetAtt [ "ELBApp7-phpSG", "Outputs.SecurityGroup" ]
 
-  AppWatchTowerSG:
-    Type: AWS::CloudFormation::Stack
-    DependsOn: ELBWatchTowerSG
-    Properties:
-      TemplateURL: !Sub https://s3-${AWS::Region}.amazonaws.com/${BuildBucket}/${AppWatchTowerFile}
-      Parameters:
-        Environment: !Ref Environment
-        BusinessUnit: !Ref BusinessUnit
-        Department: !Ref Department
-        Application: !Ref Application
-        VPCId:
-          Fn::ImportValue: !Sub ${VPCStackName}-VPCID
-        Component: WatchTower
-        ELBSecurityGroup: !GetAtt [ "ELBWatchTowerSG", "Outputs.SecurityGroup" ]
+#  AppApp9-phpSG:
+#    Type: AWS::CloudFormation::Stack
+#    DependsOn: ELBApp9-phpSG
+#    Properties:
+#      TemplateURL: !Sub https://s3-${AWS::Region}.amazonaws.com/${BuildBucket}/${AppApp9-phpFile}
+#      Parameters:
+#        Environment: !Ref Environment
+#        BusinessUnit: !Ref BusinessUnit
+#        Department: !Ref Department
+#        Application: !Ref Application
+#        VPCId:
+#          Fn::ImportValue: !Sub ${VPCStackName}-VPCID
+#        Component: App9-php
+#        ELBSecurityGroup: !GetAtt [ "ELBApp9-phpSG", "Outputs.SecurityGroup" ]
 
   AppKafkaSG:
     Type: AWS::CloudFormation::Stack
     DependsOn:
-    - AppAmpliFiSG
+    - AppApp1-phpSG
     - AppApp3-javaSG
     - AppApp4-phpSG
     - AppApp5-phpSG
     - AppApp7-phpSG
-    - AppWatchTowerSG
+#    - AppApp9-pphpSG
     Properties:
       TemplateURL: !Sub https://s3-${AWS::Region}.amazonaws.com/${BuildBucket}/${AppKafkaFile}
       Parameters:
@@ -336,12 +336,12 @@ Resources:
         VPCId:
           Fn::ImportValue: !Sub ${VPCStackName}-VPCID
         Component: Kafka
-        AppAmpliFiSecurityGroup: !GetAtt [ "AppAmpliFiSG", "Outputs.SecurityGroup" ]
+        AppApp1-phpSecurityGroup: !GetAtt [ "AppApp1-phpSG", "Outputs.SecurityGroup" ]
         AppApp3-javaSecurityGroup: !GetAtt [ "AppApp3-javaSG", "Outputs.SecurityGroup" ]
         AppApp4-phpSecurityGroup: !GetAtt [ "AppApp4-phpSG", "Outputs.SecurityGroup" ]
         AppApp5-phpSecurityGroup: !GetAtt [ "AppApp5-phpSG", "Outputs.SecurityGroup" ]
         AppApp7-phpSecurityGroup: !GetAtt [ "AppApp7-phpSG", "Outputs.SecurityGroup" ]
-        AppWatchTowerSecurityGroup: !GetAtt [ "AppWatchTowerSG", "Outputs.SecurityGroup" ]
+#        AppApp9-phpSecurityGroup: !GetAtt [ "AppApp9-phpSG", "Outputs.SecurityGroup" ]
 
   AppRabbitMqSG:
     Type: AWS::CloudFormation::Stack
@@ -363,12 +363,12 @@ Resources:
   ElastiCacheRedisSG:
     Type: AWS::CloudFormation::Stack
     DependsOn:
-    - AppAmpliFiSG
+    - AppApp1-phpSG
     - AppApp3-javaSG
     - AppApp4-phpSG
     - AppApp5-phpSG
     - AppApp7-phpSG
-    - AppWatchTowerSG
+#    - AppApp9-phpSG
     Properties:
       TemplateURL: !Sub https://s3-${AWS::Region}.amazonaws.com/${BuildBucket}/${ElastiCacheRedisFile}
       Parameters:
@@ -379,22 +379,22 @@ Resources:
         VPCId:
           Fn::ImportValue: !Sub ${VPCStackName}-VPCID
         Component: ElastiCacheRedis
-        AppAmpliFiSecurityGroup: !GetAtt [ "AppAmpliFiSG", "Outputs.SecurityGroup" ]
+        AppApp1-phpSecurityGroup: !GetAtt [ "AppApp1-phpSG", "Outputs.SecurityGroup" ]
         AppApp3-javaSecurityGroup: !GetAtt [ "AppApp3-javaSG", "Outputs.SecurityGroup" ]
         AppApp4-phpSecurityGroup: !GetAtt [ "AppApp4-phpSG", "Outputs.SecurityGroup" ]
         AppApp5-phpSecurityGroup: !GetAtt [ "AppApp5-phpSG", "Outputs.SecurityGroup" ]
         AppApp7-phpSecurityGroup: !GetAtt [ "AppApp7-phpSG", "Outputs.SecurityGroup" ]
-        AppWatchTowerSecurityGroup: !GetAtt [ "AppWatchTowerSG", "Outputs.SecurityGroup" ]
+#        AppApp9-phpSecurityGroup: !GetAtt [ "AppApp9-phpSG", "Outputs.SecurityGroup" ]
 
   RDSMySqlSG:
     Type: AWS::CloudFormation::Stack
     DependsOn:
-    - AppAmpliFiSG
+    - AppApp1-phpSG
     - AppApp3-javaSG
     - AppApp4-phpSG
     - AppApp5-phpSG
     - AppApp7-phpSG
-    - AppWatchTowerSG
+#    - AppApp9-phpSG
     Properties:
       TemplateURL: !Join [ "/", [ "https://s3-ap-southeast-2.amazonaws.com", !Ref BuildBucket, !Ref RDSMySqlFile ]]
       Parameters:
@@ -405,26 +405,26 @@ Resources:
         VPCId:
           Fn::ImportValue: !Sub ${VPCStackName}-VPCID
         Component: RDSMySql
-        AppAmpliFiSecurityGroup: !GetAtt [ "AppAmpliFiSG", "Outputs.SecurityGroup" ]
+        AppApp1-phpSecurityGroup: !GetAtt [ "AppApp1-phpSG", "Outputs.SecurityGroup" ]
         AppApp3-javaSecurityGroup: !GetAtt [ "AppApp3-javaSG", "Outputs.SecurityGroup" ]
         AppApp4-phpSecurityGroup: !GetAtt [ "AppApp4-phpSG", "Outputs.SecurityGroup" ]
         AppApp5-phpSecurityGroup: !GetAtt [ "AppApp5-phpSG", "Outputs.SecurityGroup" ]
         AppApp7-phpSecurityGroup: !GetAtt [ "AppApp7-phpSG", "Outputs.SecurityGroup" ]
-        AppWatchTowerSecurityGroup: !GetAtt [ "AppWatchTowerSG", "Outputs.SecurityGroup" ]
+#        AppApp9-phpSecurityGroup: !GetAtt [ "AppApp9-phpSG", "Outputs.SecurityGroup" ]
 
 Outputs:
 
-  ELBAmpliFiSG:
-    Description: Load Balancer AmpliFi Security Group ID
-    Value: !GetAtt [ "ELBAmpliFiSG", "Outputs.SecurityGroup" ]
+  ELBApp1-phpSG:
+    Description: Load Balancer App1-php Security Group ID
+    Value: !GetAtt [ "ELBApp1-phpSG", "Outputs.SecurityGroup" ]
     Export:
-      Name: !Sub "${AWS::StackName}-ELBAmpliFiSG"
+      Name: !Sub "${AWS::StackName}-ELBApp1-phpSG"
 
-  AppAmpliFiSG:
-    Description: Application AmpliFi Security Group ID
-    Value: !GetAtt [ "AppAmpliFiSG", "Outputs.SecurityGroup" ]
+  AppApp1-phpSG:
+    Description: Application App1-php Security Group ID
+    Value: !GetAtt [ "AppApp1-phpSG", "Outputs.SecurityGroup" ]
     Export:
-      Name: !Sub "${AWS::StackName}-AppAmpliFiSG"
+      Name: !Sub "${AWS::StackName}-AppApp1-phpSG"
 
   ELBApp3-javaSG:
     Description: Load Balancer App3-java Security Group ID
@@ -474,17 +474,17 @@ Outputs:
     Export:
       Name: !Sub "${AWS::StackName}-AppApp7-phpSG"
 
-  ELBWatchTowerSG:
-    Description: Load Balancer WatchTower Security Group ID
-    Value: !GetAtt [ "ELBWatchTowerSG", "Outputs.SecurityGroup" ]
-    Export:
-      Name: !Sub "${AWS::StackName}-ELBWatchTowerSG"
+#  ELBApp9-phpSG:
+#    Description: Load Balancer App9-php Security Group ID
+#    Value: !GetAtt [ "ELBApp9-phpSG", "Outputs.SecurityGroup" ]
+#    Export:
+#      Name: !Sub "${AWS::StackName}-ELBApp9-phpSG"
 
-  AppWatchTowerSG:
-    Description: Application WatchTower Security Group ID
-    Value: !GetAtt [ "AppWatchTowerSG", "Outputs.SecurityGroup" ]
-    Export:
-      Name: !Sub "${AWS::StackName}-AppWatchTowerSG"
+#  AppApp9-phpSG:
+#    Description: Application App9-php Security Group ID
+#    Value: !GetAtt [ "AppApp9-phpSG", "Outputs.SecurityGroup" ]
+#    Export:
+#      Name: !Sub "${AWS::StackName}-AppApp9-phpSG"
 
   AppKafkaSG:
     Description: Application Kafka Security Group ID
